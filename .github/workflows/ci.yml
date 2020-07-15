@@ -7,6 +7,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Install required system packages
+        run: sudo apt-get install php-imagick
+
       - name: PHP version info
         run: |
           php -v
