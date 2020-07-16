@@ -29,6 +29,8 @@ If you want to run the integration tests for this adapter you need to export the
 - `B2_BUCKET_ID`
 - `B2_BUCKET_NAME`
 
+You will also need to copy `phpunit.xml.dist` to `phpunit.xml` and comment out or remove the part in the configuration that excludes the integration test group.
+
 **Warning:** The integration tests will empty the specified bucket, so if you intend to run the integration tests you should create a dedicated bucket for this purpose.
 
 ## License

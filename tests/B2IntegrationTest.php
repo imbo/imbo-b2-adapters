@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @coversDefaultClass Imbo\Storage\B2
+ * @group integration
  */
 class B2IntegrationTest extends TestCase {
     private B2 $adapter;
