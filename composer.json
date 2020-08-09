@@ -22,11 +22,11 @@
   "require-dev": {
     "imbo/imbo": "dev-develop",
     "phpunit/phpunit": "^9.2",
-    "phpstan/phpstan": "^0.12.32",
-    "phpstan/phpstan-phpunit": "^0.12.11",
+    "phpstan/phpstan": "^0.12",
+    "phpstan/phpstan-phpunit": "^0.12",
     "phpstan/extension-installer": "^1.0",
-    "vimeo/psalm": "^3.12",
-    "psalm/plugin-phpunit": "dev-master"
+    "vimeo/psalm": "^3.13",
+    "psalm/plugin-phpunit": "^0.10"
   },
   "autoload": {
     "psr-4": {
