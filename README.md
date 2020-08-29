@@ -18,8 +18,6 @@ use Imbo\Storage\B2;
 $adapter = new B2($keyId, $applicationKey, $bucketId, $bucketName);
 ```
 
-Because of a limitation in the underlying library for the B2 integration you will need to specify the key ID and the application key for the `Master Application Key`.
-
 ## Running integration tests
 
 If you want to run the integration tests for this adapter you need to export the following environment variables:
