@@ -1,37 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.2/phpunit.xsd"
-         bootstrap="vendor/autoload.php"
-         executionOrder="depends,defects"
-         forceCoversAnnotation="true"
-         beStrictAboutCoversAnnotation="false"
-         beStrictAboutOutputDuringTests="true"
-         beStrictAboutTodoAnnotatedTests="true"
-         verbose="true">
-    <testsuites>
-        <testsuite name="default">
-            <directory suffix="Test.php">tests</directory>
-        </testsuite>
-    </testsuites>
-
-    <php>
-        <!-- Set values to enable optional integration tests -->
-        <env name="B2_KEY_ID" value=""/>
-        <env name="B2_APPLICATION_KEY" value=""/>
-        <env name="B2_BUCKET_ID" value=""/>
-        <env name="B2_BUCKET_NAME" value=""/>
-    </php>
-
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">src</directory>
-        </whitelist>
-    </filter>
-
-    <!-- exclude integration tests by default -->
-    <groups>
-        <exclude>
-            <group>integration</group>
-        </exclude>
-    </groups>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd" bootstrap="vendor/autoload.php" executionOrder="depends,defects" forceCoversAnnotation="true" beStrictAboutCoversAnnotation="false" beStrictAboutOutputDuringTests="true" beStrictAboutTodoAnnotatedTests="true" verbose="true">
+  <coverage processUncoveredFiles="true">
+    <include>
+      <directory suffix=".php">src</directory>
+    </include>
+  </coverage>
+  <testsuites>
+    <testsuite name="default">
+      <directory suffix="Test.php">tests</directory>
+    </testsuite>
+  </testsuites>
+  <php>
+    <!-- Set values to enable optional integration tests -->
+    <env name="B2_KEY_ID" value=""/>
+    <env name="B2_APPLICATION_KEY" value=""/>
+    <env name="B2_BUCKET_ID" value=""/>
+    <env name="B2_BUCKET_NAME" value=""/>
+  </php>
+  <!-- exclude integration tests by default -->
+  <groups>
+    <exclude>
+      <group>integration</group>
+    </exclude>
+  </groups>
 </phpunit>

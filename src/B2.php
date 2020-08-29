@@ -2,11 +2,7 @@
 namespace Imbo\Storage;
 
 use Imbo\Exception\StorageException;
-use ChrisWhite\B2\Client;
-use ChrisWhite\B2\Exceptions\NotFoundException;
-use Exception;
 use DateTime;
-use DateTimeZone;
 
 class B2 implements StorageInterface {
     private Client $client;
@@ -32,75 +28,71 @@ class B2 implements StorageInterface {
         $this->applicationKey = $applicationKey;
         $this->bucketId       = $bucketId;
         $this->bucketName     = $bucketName;
-        $this->client         = $client ?: new Client($this->keyId, $this->applicationKey);
+        $this->client         = $client ?: new Client($this->keyId, $this->applicationKey, $this->bucketId, $this->bucketName);
     }
 
     public function store(string $user, string $imageIdentifier, string $imageData) : bool {
         try {
-            $this->client->upload([
-                'BucketId' => $this->bucketId,
-                'FileName' => $this->getImagePath($user, $imageIdentifier),
-                'Body'     => $imageData,
-            ]);
-        } catch (Exception $e) {
+            return $this->client->uploadFile(
+                $this->getImagePath($user, $imageIdentifier),
+                $imageData,
+            );
+        } catch (Client\Exception $e) {
             throw new StorageException('Unable to upload image to B2', 503, $e);
         }
-
-        return true;
     }
 
     public function delete(string $user, string $imageIdentifier) : bool {
-        try {
-            $this->client->deleteFile([
-                'BucketId'   => $this->bucketId,
-                'BucketName' => $this->bucketName,
-                'FileName'   => $this->getImagePath($user, $imageIdentifier),
-            ]);
-        } catch (NotFoundException $e) {
-            throw new StorageException('File not found', 404, $e);
-        } catch (Exception $e) {
-            throw new StorageException('Unable to delete image', 503, $e);
+        if (!$this->imageExists($user, $imageIdentifier)) {
+            throw new StorageException('File not found', 404);
         }
 
-        return true;
+        try {
+            return $this->client->deleteFile($this->getImagePath($user, $imageIdentifier));
+        } catch (Client\Exception $e) {
+            throw new StorageException('Unable to delete image', 503, $e);
+        }
     }
 
     public function getImage(string $user, string $imageIdentifier) : ?string {
+        if (!$this->imageExists($user, $imageIdentifier)) {
+            throw new StorageException('File not found', 404);
+        }
+
         try {
-            return (string) $this->client->download([
-                'BucketName' => $this->bucketName,
-                'FileName'   => $this->getImagePath($user, $imageIdentifier),
-            ]);
-        } catch (NotFoundException $e) {
-            throw new StorageException('File not found', 404, $e);
+            return $this->client->getFile($this->getImagePath($user, $imageIdentifier));
+        } catch (Client\Exception $e) {
+            throw new StorageException('Unable to get image', 503, $e);
         }
     }
 
     public function getLastModified(string $user, string $imageIdentifier) : DateTime {
-        try {
-            $info = $this->client->getFile([
-                'BucketName' => $this->bucketName,
-                'FileName'   => $this->getImagePath($user, $imageIdentifier),
-            ]);
-        } catch (NotFoundException $e) {
-            throw new StorageException('File not found', 404, $e);
+        if (!$this->imageExists($user, $imageIdentifier)) {
+            throw new StorageException('File not found', 404);
         }
 
-        return new DateTime('@' . floor((int) $info->getUploadTimestamp() / 1000), new DateTimeZone('UTC'));
+        try {
+            $info = $this->client->getFileInfo($this->getImagePath($user, $imageIdentifier));
+        } catch (Client\Exception $e) {
+            throw new StorageException('Unable to get file info', 503, $e);
+        }
+
+        $timestamp = isset($info['x-bz-info-src_last_modified_millis'])
+            ? (int) $info['x-bz-info-src_last_modified_millis']
+            : (time() * 1000);
+
+        return new DateTime('@' . (int) ($timestamp / 1000));
     }
 
     public function getStatus() : bool {
-        return !empty($this->client->listBuckets());
+        return $this->client->getStatus();
     }
 
     public function imageExists(string $user, string $imageIdentifier) : bool {
         try {
-            return $this->client->fileExists([
-                'BucketId' => $this->bucketId,
-                'FileName' => $this->getImagePath($user, $imageIdentifier),
-            ]);
-        } catch (NotFoundException $e) {
-            return false;
+            return $this->client->fileExists($this->getImagePath($user, $imageIdentifier));
+        } catch (Client\Exception $e) {
+            throw new StorageException('Unable to check if image exists', 503, $e);
         }
     }
 
