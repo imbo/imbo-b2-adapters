@@ -5,6 +5,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @coversDefaultClass Imbo\Storage\Client
+ * @group integration
  */
 class ClientIntegrationTest extends TestCase {
     private Client $client;
