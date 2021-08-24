@@ -2,10 +2,20 @@ name: CI
 on: push
 jobs:
   ci:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      matrix:
+        operating-system: ['ubuntu-20.04']
+        php-versions: ['7.4', '8.0']
     name: Run CI build
     steps:
       - uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          tools: php-cs-fixer
 
       - name: Install required system packages
         run: sudo apt-get install php-imagick
@@ -18,9 +28,6 @@ jobs:
 
       - name: Validate composer files
         run: composer validate --strict
-
-      - name: Lint all PHP files
-        run: composer run lint
 
       - name: Get Composer Cache Directory
         id: composer-cache-dir
@@ -37,7 +44,7 @@ jobs:
             ${{ runner.os }}-composer-
 
       - name: Install dependencies
-        run: composer install --prefer-dist --no-suggest --no-progress -o
+        run: composer install
 
       - name: Run unit tests
         run: composer run test
