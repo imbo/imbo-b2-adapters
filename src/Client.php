@@ -82,7 +82,7 @@ class Client {
                     'headers' => [
                         'Authorization'                      => $response['authorizationToken'],
                         'Content-Type'                       => 'b2/x-auto',
-                        'Content-Length'                     => mb_strlen($data),
+                        'Content-Length'                     => strlen($data),
                         'X-Bz-Content-Sha1'                  => sha1($data),
                         'X-Bz-File-Name'                     => $fileName,
                         'X-Bz-Info-src_last_modified_millis' => time() * 1000,
