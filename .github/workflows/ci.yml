@@ -16,9 +16,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           tools: php-cs-fixer
-
-      - name: Install required system packages
-        run: sudo apt-get install php-imagick
+          extensions: imagick
 
       - name: PHP version info
         run: |
