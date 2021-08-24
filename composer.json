@@ -26,9 +26,9 @@
     "phpstan/phpstan-phpunit": "^0.12",
     "phpstan/extension-installer": "^1.0",
     "imbo/imbo-adapters-sdk": "dev-main",
-    "imbo/imbo-coding-standard": "dev-main",
     "vimeo/psalm": "^4.9",
-    "psalm/plugin-phpunit": "^0.16.1"
+    "psalm/plugin-phpunit": "^0.16.1",
+    "imbo/imbo-coding-standard": "^2.0"
   },
   "autoload": {
     "psr-4": {
