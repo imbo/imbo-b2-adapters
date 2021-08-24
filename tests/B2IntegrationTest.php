@@ -5,10 +5,12 @@ namespace Imbo\Storage;
  * @coversDefaultClass Imbo\Storage\B2
  * @group integration
  */
-class B2IntegrationTest extends StorageTests {
+class B2IntegrationTest extends StorageTests
+{
     protected int $deltaForTimestamps = 10;
 
-    private function checkEnv() : void {
+    private function checkEnv(): void
+    {
         $required = [
             'B2_KEY_ID',
             'B2_APPLICATION_KEY',
@@ -28,7 +30,8 @@ class B2IntegrationTest extends StorageTests {
         }
     }
 
-    protected function getAdapter() : B2 {
+    protected function getAdapter(): B2
+    {
         $this->checkEnv();
 
         $client = new Client(

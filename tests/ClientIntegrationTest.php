@@ -7,10 +7,12 @@ use PHPUnit\Framework\TestCase;
  * @coversDefaultClass Imbo\Storage\Client
  * @group integration
  */
-class ClientIntegrationTest extends TestCase {
+class ClientIntegrationTest extends TestCase
+{
     private Client $client;
 
-    public function setUp() : void {
+    public function setUp(): void
+    {
         $required = [
             'B2_KEY_ID',
             'B2_APPLICATION_KEY',
@@ -41,7 +43,8 @@ class ClientIntegrationTest extends TestCase {
     /**
      * @covers ::uploadFile
      */
-    public function testCanUploadFile() : void {
+    public function testCanUploadFile(): void
+    {
         $this->assertTrue(
             $this->client->uploadFile('some/name', 'this is my content'),
         );
@@ -51,7 +54,8 @@ class ClientIntegrationTest extends TestCase {
      * @covers ::uploadFile
      * @covers ::getFileInfo
      */
-    public function testCanGetFileInfo() : void {
+    public function testCanGetFileInfo(): void
+    {
         $this->assertTrue(
             $this->client->uploadFile('some/name', 'this is my content'),
         );

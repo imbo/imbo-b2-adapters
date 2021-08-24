@@ -2,18 +2,20 @@
 namespace Imbo\Storage;
 
 use DateTime;
-use Imbo\Storage\Client\Exception as ClientException;
 use Imbo\Exception\StorageException;
+use Imbo\Storage\Client\Exception as ClientException;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @coversDefaultClass Imbo\Storage\B2
  */
-class B2Test extends TestCase {
+class B2Test extends TestCase
+{
     private string $bucketId   = 'bucket-id';
     private string $bucketName = 'bucket-name';
 
-    private function getAdapter(Client $client) : B2 {
+    private function getAdapter(Client $client): B2
+    {
         return new B2('key-id', 'application-key', $this->bucketId, $this->bucketName, $client);
     }
 
@@ -22,7 +24,8 @@ class B2Test extends TestCase {
      * @covers ::getImagePath
      * @covers ::store
      */
-    public function testCanStoreImage() : void {
+    public function testCanStoreImage(): void
+    {
         $client = $this->createMock(Client::class);
         $client
             ->expects($this->once())
@@ -39,7 +42,8 @@ class B2Test extends TestCase {
     /**
      * @covers ::store
      */
-    public function testThrowsExceptionWhenClientIsUnableToUploadImage() : void {
+    public function testThrowsExceptionWhenClientIsUnableToUploadImage(): void
+    {
         $client = $this->createMock(Client::class);
         $client
             ->expects($this->once())
@@ -53,7 +57,8 @@ class B2Test extends TestCase {
     /**
      * @covers ::delete
      */
-    public function testCanDeleteImage() : void {
+    public function testCanDeleteImage(): void
+    {
         $client = $this->createMock(Client::class);
         $client
             ->expects($this->once())
@@ -76,7 +81,8 @@ class B2Test extends TestCase {
     /**
      * @covers ::delete
      */
-    public function testThrowsExceptionWhenDeletingImageThatDoesNotExist() : void {
+    public function testThrowsExceptionWhenDeletingImageThatDoesNotExist(): void
+    {
         $client = $this->createConfiguredMock(Client::class, [
             'fileExists' => false,
         ]);
@@ -91,7 +97,8 @@ class B2Test extends TestCase {
     /**
      * @covers ::delete
      */
-    public function testThrowsExceptionWhenDeletingImageFails() : void {
+    public function testThrowsExceptionWhenDeletingImageFails(): void
+    {
         $client = $this->createConfiguredMock(Client::class, [
             'fileExists' => true,
         ]);
@@ -108,7 +115,8 @@ class B2Test extends TestCase {
     /**
      * @covers ::getImage
      */
-    public function testCanGetImage() : void {
+    public function testCanGetImage(): void
+    {
         $client = $this->createMock(Client::class);
         $client
             ->expects($this->once())
@@ -131,7 +139,8 @@ class B2Test extends TestCase {
     /**
      * @covers ::getImage
      */
-    public function testThrowsExceptionWhenFetchingImageThatDoesNotExist() : void {
+    public function testThrowsExceptionWhenFetchingImageThatDoesNotExist(): void
+    {
         $client = $this->createConfiguredMock(Client::class, [
             'fileExists' => false,
         ]);
@@ -146,7 +155,8 @@ class B2Test extends TestCase {
     /**
      * @covers ::getImage
      */
-    public function testThrowsExceptionWhenFetchingImageFails() : void {
+    public function testThrowsExceptionWhenFetchingImageFails(): void
+    {
         $client = $this->createConfiguredMock(Client::class, [
             'fileExists' => true,
         ]);
@@ -163,7 +173,8 @@ class B2Test extends TestCase {
     /**
      * @return array<string, array{fileInfo: array<string, int>, expectedTimestamp: string}>
      */
-    public function getFileInfoForLastModified() : array {
+    public function getFileInfoForLastModified(): array
+    {
         return [
             'with timestamp' => [
                 'fileInfo' => ['x-bz-info-src_last_modified_millis' => 1462212185001],
@@ -182,7 +193,8 @@ class B2Test extends TestCase {
      * @covers ::getLastModified
      * @param array<string, int> $fileInfo
      */
-    public function testCanGetLastModified(array $fileInfo, string $expectedTimestamp) : void {
+    public function testCanGetLastModified(array $fileInfo, string $expectedTimestamp): void
+    {
         $client = $this->createMock(Client::class);
         $client
             ->expects($this->once())
@@ -208,7 +220,8 @@ class B2Test extends TestCase {
     /**
      * @covers ::getLastModified
      */
-    public function testThrowsExceptionWhenFetchingLastModifiedDateForImageThatDoesNotExist() : void {
+    public function testThrowsExceptionWhenFetchingLastModifiedDateForImageThatDoesNotExist(): void
+    {
         $client = $this->createConfiguredMock(Client::class, [
             'fileExists' => false,
         ]);
@@ -223,7 +236,8 @@ class B2Test extends TestCase {
     /**
      * @covers ::getLastModified
      */
-    public function testThrowsExceptionWhenFetchingLastModifiedDateForImageFails() : void {
+    public function testThrowsExceptionWhenFetchingLastModifiedDateForImageFails(): void
+    {
         $client = $this->createConfiguredMock(Client::class, [
             'fileExists' => true,
         ]);
@@ -242,7 +256,8 @@ class B2Test extends TestCase {
     /**
      * @covers ::getStatus
      */
-    public function testCanGetStatus() : void {
+    public function testCanGetStatus(): void
+    {
         $client = $this->createMock(Client::class);
         $client
             ->expects($this->exactly(3))
@@ -268,7 +283,8 @@ class B2Test extends TestCase {
     /**
      * @covers ::imageExists
      */
-    public function testCanCheckIfImageExists() : void {
+    public function testCanCheckIfImageExists(): void
+    {
         $client = $this->createMock(Client::class);
         $client
             ->expects($this->exactly(3))
@@ -295,7 +311,8 @@ class B2Test extends TestCase {
     /**
      * @covers ::imageExists
      */
-    public function testCheckIfImageExistsThrowsExceptionOnFailure() : void {
+    public function testCheckIfImageExistsThrowsExceptionOnFailure(): void
+    {
         $client = $this->createMock(Client::class);
         $client
             ->expects($this->once())
@@ -303,7 +320,7 @@ class B2Test extends TestCase {
             ->with('user/image-id')
             ->willThrowException($e = new ClientException('some error', 500));
 
-            $this->expectExceptionObject(new StorageException('Unable to check if image exists', 503, $e));
-            $this->getAdapter($client)->getLastModified('user', 'image-id');
+        $this->expectExceptionObject(new StorageException('Unable to check if image exists', 503, $e));
+        $this->getAdapter($client)->getLastModified('user', 'image-id');
     }
 }

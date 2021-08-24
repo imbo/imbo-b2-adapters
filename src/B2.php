@@ -1,10 +1,11 @@
 <?php declare(strict_types=1);
 namespace Imbo\Storage;
 
-use Imbo\Exception\StorageException;
 use DateTime;
+use Imbo\Exception\StorageException;
 
-class B2 implements StorageInterface {
+class B2 implements StorageInterface
+{
     private Client $client;
     private string $keyId;
     private string $applicationKey;
@@ -23,7 +24,8 @@ class B2 implements StorageInterface {
      * @param string $bucketName     Name of the bucket to store the files in
      * @param Client $client         A pre-configured client
      */
-    public function __construct(string $keyId, string $applicationKey, string $bucketId, string $bucketName, Client $client = null) {
+    public function __construct(string $keyId, string $applicationKey, string $bucketId, string $bucketName, Client $client = null)
+    {
         $this->keyId          = $keyId;
         $this->applicationKey = $applicationKey;
         $this->bucketId       = $bucketId;
@@ -31,7 +33,8 @@ class B2 implements StorageInterface {
         $this->client         = $client ?: new Client($this->keyId, $this->applicationKey, $this->bucketId, $this->bucketName);
     }
 
-    public function store(string $user, string $imageIdentifier, string $imageData) : bool {
+    public function store(string $user, string $imageIdentifier, string $imageData): bool
+    {
         try {
             return $this->client->uploadFile(
                 $this->getImagePath($user, $imageIdentifier),
@@ -42,7 +45,8 @@ class B2 implements StorageInterface {
         }
     }
 
-    public function delete(string $user, string $imageIdentifier) : bool {
+    public function delete(string $user, string $imageIdentifier): bool
+    {
         if (!$this->imageExists($user, $imageIdentifier)) {
             throw new StorageException('File not found', 404);
         }
@@ -54,7 +58,8 @@ class B2 implements StorageInterface {
         }
     }
 
-    public function getImage(string $user, string $imageIdentifier) : ?string {
+    public function getImage(string $user, string $imageIdentifier): ?string
+    {
         if (!$this->imageExists($user, $imageIdentifier)) {
             throw new StorageException('File not found', 404);
         }
@@ -66,7 +71,8 @@ class B2 implements StorageInterface {
         }
     }
 
-    public function getLastModified(string $user, string $imageIdentifier) : DateTime {
+    public function getLastModified(string $user, string $imageIdentifier): DateTime
+    {
         if (!$this->imageExists($user, $imageIdentifier)) {
             throw new StorageException('File not found', 404);
         }
@@ -84,11 +90,13 @@ class B2 implements StorageInterface {
         return new DateTime('@' . (int) ($timestamp / 1000));
     }
 
-    public function getStatus() : bool {
+    public function getStatus(): bool
+    {
         return $this->client->getStatus();
     }
 
-    public function imageExists(string $user, string $imageIdentifier) : bool {
+    public function imageExists(string $user, string $imageIdentifier): bool
+    {
         try {
             return $this->client->fileExists($this->getImagePath($user, $imageIdentifier));
         } catch (Client\Exception $e) {
@@ -103,7 +111,8 @@ class B2 implements StorageInterface {
      * @param string $imageIdentifier Image identifier
      * @return string
      */
-    protected function getImagePath(string $user, string $imageIdentifier) : string {
+    protected function getImagePath(string $user, string $imageIdentifier): string
+    {
         return $user . '/' . $imageIdentifier;
     }
 }

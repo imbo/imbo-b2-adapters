@@ -7,7 +7,8 @@ use Imbo\Storage\Client\Exception;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
-class Client {
+class Client
+{
     private HttpClient $client;
     private string $bucketId;
     private string $bucketName;
@@ -25,7 +26,8 @@ class Client {
      * @param HttpClient $authClient Pre-configured client instance used for generating the auth token
      * @param HttpClient $httpClient Pre-configured client instance used for API calls
      */
-    public function __construct(string $keyId, string $applicationKey, string $bucketId, string $bucketName, HttpClient $authClient = null, HttpClient $httpClient = null) {
+    public function __construct(string $keyId, string $applicationKey, string $bucketId, string $bucketName, HttpClient $authClient = null, HttpClient $httpClient = null)
+    {
         try {
             /** @var array{authorizationToken: string, apiUrl: string, downloadUrl: string} */
             $response = $this->responseAsJson(($authClient ?: new HttpClient())->get('https://api.backblazeb2.com/b2api/v2/b2_authorize_account', [
@@ -57,7 +59,8 @@ class Client {
      * @throws Exception
      * @return bool
      */
-    public function uploadFile(string $fileName, string $data) : bool {
+    public function uploadFile(string $fileName, string $data): bool
+    {
         /** @var ?Throwable */
         $e = null;
 
@@ -67,7 +70,7 @@ class Client {
                 $response = $this->responseAsJson($this->client->post('b2_get_upload_url', [
                     'json' => [
                         'bucketId' => $this->bucketId,
-                    ]
+                    ],
                 ]));
             } catch (HttpClientException $e) {
                 continue;
@@ -106,7 +109,8 @@ class Client {
      * @throws Exception
      * @return bool
      */
-    public function deleteFile(string $fileName) : bool {
+    public function deleteFile(string $fileName): bool
+    {
         if (!$this->fileExists($fileName)) {
             throw new Exception('File does not exist', 404);
         }
@@ -163,7 +167,8 @@ class Client {
      * @throws Exception
      * @return bool
      */
-    public function emptyBucket() : bool {
+    public function emptyBucket(): bool
+    {
         $startFileName = null;
         $startFileId   = null;
 
@@ -195,7 +200,6 @@ class Client {
                 } catch (HttpClientException $e) {
                     throw new Exception('Unable to delete file version', 503, $e);
                 }
-
             }
         } while (null !== $startFileName && null !== $startFileId);
 
@@ -207,13 +211,14 @@ class Client {
      *
      * @return bool
      */
-    public function getStatus() : bool {
+    public function getStatus(): bool
+    {
         try {
             $this->client->post('b2_list_file_names', [
                 'json' => [
                     'bucketId'     => $this->bucketId,
                     'maxFileCount' => 1,
-                ]
+                ],
             ]);
         } catch (HttpClientException $e) {
             return false;
@@ -229,7 +234,8 @@ class Client {
      * @throws Exception
      * @return bool
      */
-    public function fileExists(string $fileName) : bool {
+    public function fileExists(string $fileName): bool
+    {
         try {
             $this->client->head($this->getFileUrl($fileName));
         } catch (HttpClientException $e) {
@@ -250,7 +256,8 @@ class Client {
      * @throws Exception
      * @return string
      */
-    public function getFile(string $fileName) : string {
+    public function getFile(string $fileName): string
+    {
         try {
             return $this->client->get($this->getFileUrl($fileName))->getBody()->getContents();
         } catch (HttpClientException $e) {
@@ -268,7 +275,8 @@ class Client {
      * @param string $fileName
      * @return array<string, string>
      */
-    public function getFileInfo(string $fileName) : array {
+    public function getFileInfo(string $fileName): array
+    {
         try {
             $response = $this->client->head($this->getFileUrl($fileName));
         } catch (HttpClientException $e) {
@@ -280,7 +288,7 @@ class Client {
         }
 
         /** @var array<string, string> */
-        return array_map(fn(array $header) : string => implode($header), $response->getHeaders());
+        return array_map(fn (array $header): string => implode($header), $response->getHeaders());
     }
 
     /**
@@ -289,7 +297,8 @@ class Client {
      * @param ResponseInterface $response
      * @return array<array-key, mixed>
      */
-    private function responseAsJson(ResponseInterface $response) : array {
+    private function responseAsJson(ResponseInterface $response): array
+    {
         /** @var array<array-key, mixed> */
         $json = json_decode($response->getBody()->getContents(), true);
 
@@ -306,7 +315,8 @@ class Client {
      * @param string $fileName
      * @return string
      */
-    private function getFileUrl(string $fileName) : string {
+    private function getFileUrl(string $fileName): string
+    {
         return $this->downloadUrl . '/file/' . $this->bucketName . '/' . $fileName;
     }
 }

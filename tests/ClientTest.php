@@ -1,20 +1,21 @@
 <?php declare(strict_types=1);
 namespace Imbo\Storage;
 
-use Imbo\Storage\Client\Exception;
-use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\RequestInterface;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
+use Imbo\Storage\Client\Exception;
+use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * @coversDefaultClass Imbo\Storage\Client
  */
-class ClientTest extends TestCase {
+class ClientTest extends TestCase
+{
     private string $keyId          = 'keyId';
     private string $applicationKey = 'applicationKey';
     private string $bucketId       = 'bucketId';
@@ -28,7 +29,8 @@ class ClientTest extends TestCase {
      * @param array<int, array{response: ResponseInterface, request: RequestInterface}> $history
      * @return HttpClient
      */
-    private function getMockClient(array $responses, array &$history = []) : HttpClient {
+    private function getMockClient(array $responses, array &$history = []): HttpClient
+    {
         $handler = HandlerStack::create(new MockHandler($responses));
         $handler->push(Middleware::history($history));
 
@@ -39,14 +41,16 @@ class ClientTest extends TestCase {
      * @param array<int, array{response: ResponseInterface, request: RequestInterface}> $history
      * @return HttpClient
      */
-    private function getMockedAuthClient(array &$history = []) : HttpClient {
+    private function getMockedAuthClient(array &$history = []): HttpClient
+    {
         return $this->getMockClient([$this->getAuthResponse()], $history);
     }
 
     /**
      * @return Response
      */
-    private function getAuthResponse() : Response {
+    private function getAuthResponse(): Response
+    {
         return new Response(200, [], (string) json_encode([
             'authorizationToken' => $this->authToken,
             'downloadUrl'        => $this->downloadUrl,
@@ -58,7 +62,8 @@ class ClientTest extends TestCase {
      * @covers ::__construct
      * @covers ::responseAsJson
      */
-    public function testCanConstructClient() : void {
+    public function testCanConstructClient(): void
+    {
         $history = [];
 
         new Client(
@@ -78,7 +83,8 @@ class ClientTest extends TestCase {
     /**
      * @covers ::__construct
      */
-    public function testClientConstructionCanFail() : void {
+    public function testClientConstructionCanFail(): void
+    {
         $this->expectExceptionObject(new Exception('Unable to create HttpClient for the B2 API', 503));
         new Client(
             $this->keyId,
@@ -92,7 +98,8 @@ class ClientTest extends TestCase {
     /**
      * @covers ::uploadFile
      */
-    public function testCanUploadFile() : void {
+    public function testCanUploadFile(): void
+    {
         $uploadUrl   = 'uploadUrl';
         $uploadToken = 'uploadToken';
         $history     = [];
@@ -172,7 +179,8 @@ class ClientTest extends TestCase {
     /**
      * @covers ::uploadFile
      */
-    public function testThrowsExceptionWhenUploadingFileFails() : void {
+    public function testThrowsExceptionWhenUploadingFileFails(): void
+    {
         $history     = [];
         $httpClient  = $this->getMockClient(
             [
@@ -203,7 +211,8 @@ class ClientTest extends TestCase {
     /**
      * @covers ::deleteFile
      */
-    public function testCanDeleteFile() : void {
+    public function testCanDeleteFile(): void
+    {
         $history     = [];
         $httpClient  = $this->getMockClient(
             [
@@ -221,9 +230,9 @@ class ClientTest extends TestCase {
                         [
                             'fileId'   => 'id3',
                             'fileName' => 'some/other/name', // This should normally not occur, but
-                                                             // adding it here to verify that the
-                                                             // code does not accidentally delete the
-                                                             // file
+                            // adding it here to verify that the
+                            // code does not accidentally delete the
+                            // file
                         ],
                     ],
                     'nextFileName' => null,
@@ -278,7 +287,8 @@ class ClientTest extends TestCase {
     /**
      * @covers ::deleteFile
      */
-    public function testDeleteFileThrowsExceptionWhenFileDoesNotExist() : void {
+    public function testDeleteFileThrowsExceptionWhenFileDoesNotExist(): void
+    {
         $this->expectExceptionObject(new Exception('File does not exist', 404));
         (new Client(
             $this->keyId,
@@ -293,7 +303,8 @@ class ClientTest extends TestCase {
     /**
      * @covers ::deleteFile
      */
-    public function testDeleteFileThrowsExceptionWhenDeleteFails() : void {
+    public function testDeleteFileThrowsExceptionWhenDeleteFails(): void
+    {
         $httpClient = $this->getMockClient(
             [
                 new Response(200), // Response for fileExists
@@ -325,7 +336,8 @@ class ClientTest extends TestCase {
     /**
      * @covers ::deleteFile
      */
-    public function testDeleteFileThrowsExceptionWhenUnableToListFileVersions() : void {
+    public function testDeleteFileThrowsExceptionWhenUnableToListFileVersions(): void
+    {
         $httpClient = $this->getMockClient(
             [
                 new Response(200), // Response for fileExists
@@ -347,7 +359,8 @@ class ClientTest extends TestCase {
     /**
      * @covers ::emptyBucket
      */
-    public function testCanEmptyBucket() : void {
+    public function testCanEmptyBucket(): void
+    {
         $history    = [];
         $httpClient = $this->getMockClient(
             [
@@ -357,11 +370,11 @@ class ClientTest extends TestCase {
                     'files'        => [
                         [
                             'fileId'   => 'id1',
-                            'fileName' => 'name'
+                            'fileName' => 'name',
                         ],
                         [
                             'fileId'   => 'id2',
-                            'fileName' => 'name'
+                            'fileName' => 'name',
                         ],
                     ],
                 ])),
@@ -373,11 +386,11 @@ class ClientTest extends TestCase {
                     'files'        => [
                         [
                             'fileId'   => 'id3',
-                            'fileName' => 'name2'
+                            'fileName' => 'name2',
                         ],
                         [
                             'fileId'   => 'id4',
-                            'fileName' => 'name3'
+                            'fileName' => 'name3',
                         ],
                     ],
                 ])),
@@ -425,7 +438,8 @@ class ClientTest extends TestCase {
     /**
      * @covers ::emptyBucket
      */
-    public function testEmptyBucketFailsWhenUnableToListFileVersions() : void {
+    public function testEmptyBucketFailsWhenUnableToListFileVersions(): void
+    {
         $this->expectExceptionObject(new Exception('Unable to list file versions', 503));
         (new Client(
             $this->keyId,
@@ -440,7 +454,8 @@ class ClientTest extends TestCase {
     /**
      * @covers ::emptyBucket
      */
-    public function testEmptyBucketFailsWhenUnableToDeleteFileVersions() : void {
+    public function testEmptyBucketFailsWhenUnableToDeleteFileVersions(): void
+    {
         $httpClient = $this->getMockClient(
             [
                 new Response(200, [], (string) json_encode([
@@ -449,7 +464,7 @@ class ClientTest extends TestCase {
                     'files'        => [
                         [
                             'fileId'   => 'id',
-                            'fileName' => 'name'
+                            'fileName' => 'name',
                         ],
                     ],
                 ])),
@@ -471,7 +486,8 @@ class ClientTest extends TestCase {
     /**
      * @covers ::getStatus
      */
-    public function testCanGetStatus() : void {
+    public function testCanGetStatus(): void
+    {
         $history = [];
         $this->assertTrue(
             (new Client(
@@ -498,7 +514,8 @@ class ClientTest extends TestCase {
     /**
      * @covers ::getStatus
      */
-    public function testGetStatusReturnsFalseOnFailure() : void {
+    public function testGetStatusReturnsFalseOnFailure(): void
+    {
         $this->assertFalse(
             (new Client(
                 $this->keyId,
@@ -516,7 +533,8 @@ class ClientTest extends TestCase {
      * @covers ::fileExists
      * @covers ::getFileUrl
      */
-    public function testCanCheckIfFileExists() : void {
+    public function testCanCheckIfFileExists(): void
+    {
         $history = [];
         $file    = 'some/file';
         $this->assertTrue(
@@ -547,7 +565,8 @@ class ClientTest extends TestCase {
     /**
      * @covers ::fileExists
      */
-    public function testCheckIfFileExistsReturnsFalseWhenFileDoesNotExist() : void {
+    public function testCheckIfFileExistsReturnsFalseWhenFileDoesNotExist(): void
+    {
         $this->assertFalse(
             (new Client(
                 $this->keyId,
@@ -564,7 +583,8 @@ class ClientTest extends TestCase {
     /**
      * @covers ::fileExists
      */
-    public function testCheckIfFileExistsThrowsExceptionOnFailure() : void {
+    public function testCheckIfFileExistsThrowsExceptionOnFailure(): void
+    {
         $this->expectExceptionObject(new Exception('Unable to check if file exists', 503));
         (new Client(
             $this->keyId,
@@ -580,7 +600,8 @@ class ClientTest extends TestCase {
      * @covers ::getFile
      * @covers ::getFileUrl
      */
-    public function testCanGetFile() : void {
+    public function testCanGetFile(): void
+    {
         $history = [];
         $file = 'some/file';
         $this->assertSame(
@@ -606,7 +627,8 @@ class ClientTest extends TestCase {
     /**
      * @covers ::getFile
      */
-    public function testGetFileThrowsExceptionIfFilesDoesNotExist() : void {
+    public function testGetFileThrowsExceptionIfFilesDoesNotExist(): void
+    {
         $this->expectExceptionObject(new Exception('File does not exist', 404));
         (new Client(
             $this->keyId,
@@ -621,7 +643,8 @@ class ClientTest extends TestCase {
     /**
      * @covers ::getFile
      */
-    public function testGetFileThrowsExceptionOnError() : void {
+    public function testGetFileThrowsExceptionOnError(): void
+    {
         $this->expectExceptionObject(new Exception('Unable to get file', 503));
         (new Client(
             $this->keyId,
@@ -636,7 +659,8 @@ class ClientTest extends TestCase {
     /**
      * @covers ::getFileInfo
      */
-    public function testCanGetFileInfo() : void {
+    public function testCanGetFileInfo(): void
+    {
         $history = [];
         $file    = 'some/file';
         $headers = [
@@ -674,7 +698,8 @@ class ClientTest extends TestCase {
     /**
      * @covers ::getFileInfo
      */
-    public function testGetFileInfoThrowsExceptionWhenFileDoesNotExist() : void {
+    public function testGetFileInfoThrowsExceptionWhenFileDoesNotExist(): void
+    {
         $this->expectExceptionObject(new Exception('File does not exist', 404));
         (new Client(
             $this->keyId,
@@ -689,7 +714,8 @@ class ClientTest extends TestCase {
     /**
      * @covers ::getFileInfo
      */
-    public function testGetFileInfoThrowsExceptionOnError() : void {
+    public function testGetFileInfoThrowsExceptionOnError(): void
+    {
         $this->expectExceptionObject(new Exception('Unable to get file info', 503));
         (new Client(
             $this->keyId,
@@ -704,7 +730,8 @@ class ClientTest extends TestCase {
     /**
      * @covers ::responseAsJson
      */
-    public function testClientFailsWhenApiReturnsIncorrectJson() : void {
+    public function testClientFailsWhenApiReturnsIncorrectJson(): void
+    {
         $this->expectExceptionObject(new Exception('B2 API returned invalid JSON: Syntax error', 503));
         new Client(
             $this->keyId,
