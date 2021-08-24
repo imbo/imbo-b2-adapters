@@ -45,7 +45,10 @@ jobs:
         run: composer install
 
       - name: Run unit tests
-        run: composer run test
+        run: vendor/bin/phpunit --verbose
 
       - name: Run static code analysis
-        run: composer run sa
+        run: vendor/bin/psalm
+
+      - name: Check coding standard
+        run: php-cs-fixer fix --dry-run --diff
