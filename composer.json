@@ -25,10 +25,10 @@
     "phpstan/phpstan": "^0.12",
     "phpstan/phpstan-phpunit": "^0.12",
     "phpstan/extension-installer": "^1.0",
-    "vimeo/psalm": "^3.12",
-    "psalm/plugin-phpunit": "^0.10",
     "imbo/imbo-adapters-sdk": "dev-main",
-    "imbo/imbo-coding-standard": "dev-main"
+    "imbo/imbo-coding-standard": "dev-main",
+    "vimeo/psalm": "^4.9",
+    "psalm/plugin-phpunit": "^0.16.1"
   },
   "autoload": {
     "psr-4": {
