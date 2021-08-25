@@ -7,7 +7,7 @@ namespace Imbo\Storage;
  */
 class B2IntegrationTest extends StorageTests
 {
-    protected int $deltaForTimestamps = 10;
+    protected int $allowedTimestampDelta = 10;
 
     private function checkEnv(): void
     {
