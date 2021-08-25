@@ -17,15 +17,15 @@
   ],
   "require": {
     "php": ">=7.4",
-    "guzzlehttp/guzzle": "^7.0"
+    "guzzlehttp/guzzle": "^7.3"
   },
   "require-dev": {
     "imbo/imbo": "dev-develop",
-    "phpunit/phpunit": "^9.3",
     "imbo/imbo-adapters-sdk": "dev-main",
-    "vimeo/psalm": "^4.9",
+    "imbo/imbo-coding-standard": "^2.0",
+    "phpunit/phpunit": "^9.3",
     "psalm/plugin-phpunit": "^0.16.1",
-    "imbo/imbo-coding-standard": "^2.0"
+    "vimeo/psalm": "^4.9"
   },
   "autoload": {
     "psr-4": {
@@ -50,5 +50,8 @@
       "@test",
       "@cs"
     ]
+  },
+  "config": {
+    "sort-packages": true
   }
 }
