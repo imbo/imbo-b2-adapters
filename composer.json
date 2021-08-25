@@ -39,11 +39,8 @@
   },
   "scripts": {
     "test": "vendor/bin/phpunit --verbose",
-    "test:coverage": [
-      "vendor/bin/phpunit --verbose --coverage-html build/coverage --coverage-text"
-    ],
-    "sa:psalm": "vendor/bin/psalm",
-    "sa": "@sa:psalm",
+    "test:coverage": "vendor/bin/phpunit --verbose --coverage-html build/coverage --coverage-text",
+    "sa": "vendor/bin/psalm",
     "cs": "php-cs-fixer fix --dry-run --diff",
     "ci": [
       "@sa",
