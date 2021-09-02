@@ -38,7 +38,7 @@ class B2IntegrationTest extends StorageTests
             (string) getenv('B2_KEY_ID'),
             (string) getenv('B2_APPLICATION_KEY'),
             (string) getenv('B2_BUCKET_ID'),
-            (string) getenv('B2_BUCKET_NAME')
+            (string) getenv('B2_BUCKET_NAME'),
         );
         $client->emptyBucket();
 

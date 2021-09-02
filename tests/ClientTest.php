@@ -118,7 +118,7 @@ class ClientTest extends TestCase
                 ])),
                 new Response(200),
             ],
-            $history
+            $history,
         );
 
         $this->assertTrue(
@@ -128,7 +128,7 @@ class ClientTest extends TestCase
                 $this->bucketId,
                 $this->bucketName,
                 $this->getMockedAuthClient(),
-                $httpClient
+                $httpClient,
             ))->uploadFile('filename', 'data'),
             'Expected file to be uploaded',
         );
@@ -194,7 +194,7 @@ class ClientTest extends TestCase
                 ])),
                 new Response(400), // Fail on the last attempt
             ],
-            $history
+            $history,
         );
 
         $this->expectExceptionObject(new Exception('Unable to upload file to B2', 503));
@@ -204,7 +204,7 @@ class ClientTest extends TestCase
             $this->bucketId,
             $this->bucketName,
             $this->getMockedAuthClient(),
-            $httpClient
+            $httpClient,
         ))->uploadFile('filename', 'data');
     }
 
@@ -241,7 +241,7 @@ class ClientTest extends TestCase
                 new Response(200),
                 new Response(200),
             ],
-            $history
+            $history,
         );
 
         $this->assertTrue(
@@ -251,7 +251,7 @@ class ClientTest extends TestCase
                 $this->bucketId,
                 $this->bucketName,
                 $this->getMockedAuthClient(),
-                $httpClient
+                $httpClient,
             ))->deleteFile('some/name'),
             'Expected to delete file',
         );
@@ -296,7 +296,7 @@ class ClientTest extends TestCase
             $this->bucketId,
             $this->bucketName,
             $this->getMockedAuthClient(),
-            $this->getMockClient([new Response(404)])
+            $this->getMockClient([new Response(404)]),
         ))->deleteFile('filename');
     }
 
@@ -329,7 +329,7 @@ class ClientTest extends TestCase
             $this->bucketId,
             $this->bucketName,
             $this->getMockedAuthClient(),
-            $httpClient
+            $httpClient,
         ))->deleteFile('some/name');
     }
 
@@ -352,7 +352,7 @@ class ClientTest extends TestCase
             $this->bucketId,
             $this->bucketName,
             $this->getMockedAuthClient(),
-            $httpClient
+            $httpClient,
         ))->deleteFile('some/name');
     }
 
@@ -407,7 +407,7 @@ class ClientTest extends TestCase
                 $this->bucketId,
                 $this->bucketName,
                 $this->getMockedAuthClient(),
-                $httpClient
+                $httpClient,
             ))->emptyBucket(),
             'Expected to empty bucket',
         );
@@ -447,7 +447,7 @@ class ClientTest extends TestCase
             $this->bucketId,
             $this->bucketName,
             $this->getMockedAuthClient(),
-            $this->getMockClient([new Response(500)])
+            $this->getMockClient([new Response(500)]),
         ))->emptyBucket();
     }
 
@@ -479,7 +479,7 @@ class ClientTest extends TestCase
             $this->bucketId,
             $this->bucketName,
             $this->getMockedAuthClient(),
-            $httpClient
+            $httpClient,
         ))->emptyBucket();
     }
 
@@ -496,7 +496,7 @@ class ClientTest extends TestCase
                 $this->bucketId,
                 $this->bucketName,
                 $this->getMockedAuthClient(),
-                $this->getMockClient([new Response(200)], $history)
+                $this->getMockClient([new Response(200)], $history),
             ))->getStatus(),
             'Expected success status',
         );
@@ -523,7 +523,7 @@ class ClientTest extends TestCase
                 $this->bucketId,
                 $this->bucketName,
                 $this->getMockedAuthClient(),
-                $this->getMockClient([new Response(400)])
+                $this->getMockClient([new Response(400)]),
             ))->getStatus(),
             'Expected failure status',
         );
@@ -544,7 +544,7 @@ class ClientTest extends TestCase
                 $this->bucketId,
                 $this->bucketName,
                 $this->getMockedAuthClient(),
-                $this->getMockClient([new Response(200)], $history)
+                $this->getMockClient([new Response(200)], $history),
             ))->fileExists($file),
             'Expected file to exist',
         );
@@ -574,7 +574,7 @@ class ClientTest extends TestCase
                 $this->bucketId,
                 $this->bucketName,
                 $this->getMockedAuthClient(),
-                $this->getMockClient([new Response(404)])
+                $this->getMockClient([new Response(404)]),
             ))->fileExists('some/file'),
             'Did not expect file to exist',
         );
@@ -592,7 +592,7 @@ class ClientTest extends TestCase
             $this->bucketId,
             $this->bucketName,
             $this->getMockedAuthClient(),
-            $this->getMockClient([new Response(400)])
+            $this->getMockClient([new Response(400)]),
         ))->fileExists('some/file');
     }
 
@@ -707,7 +707,7 @@ class ClientTest extends TestCase
             $this->bucketId,
             $this->bucketName,
             $this->getMockedAuthClient(),
-            $this->getMockClient([new Response(404)])
+            $this->getMockClient([new Response(404)]),
         ))->getFileInfo('some/file');
     }
 
@@ -723,7 +723,7 @@ class ClientTest extends TestCase
             $this->bucketId,
             $this->bucketName,
             $this->getMockedAuthClient(),
-            $this->getMockClient([new Response(403)])
+            $this->getMockClient([new Response(403)]),
         ))->getFileInfo('some/file');
     }
 
