@@ -1,12 +1,5 @@
 name: CI
-on:
-  push:
-    branches:
-      - main
-  repository_dispatch:
-    types:
-      - build
-
+on: push
 jobs:
   ci:
     runs-on: ${{ matrix.operating-system }}
