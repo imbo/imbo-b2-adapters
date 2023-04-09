@@ -171,24 +171,6 @@ class B2Test extends TestCase
     }
 
     /**
-     * @return array<string, array{fileInfo: array<string, int>, expectedTimestamp: string}>
-     */
-    public function getFileInfoForLastModified(): array
-    {
-        return [
-            'with timestamp' => [
-                'fileInfo' => ['x-bz-info-src_last_modified_millis' => 1462212185001],
-                'expectedTimestamp' => '@' . 1462212185,
-            ],
-
-            'missing timestamp' => [
-                'fileInfo' => ['Last-Modified' => 1462212185001],
-                'expectedTimestamp' => 'now',
-            ],
-        ];
-    }
-
-    /**
      * @dataProvider getFileInfoForLastModified
      * @covers ::getLastModified
      * @param array<string, int> $fileInfo
@@ -322,5 +304,23 @@ class B2Test extends TestCase
 
         $this->expectExceptionObject(new StorageException('Unable to check if image exists', 503, $e));
         $this->getAdapter($client)->getLastModified('user', 'image-id');
+    }
+
+    /**
+     * @return array<string,array{fileInfo:array<string,int>,expectedTimestamp:string}>
+     */
+    public static function getFileInfoForLastModified(): array
+    {
+        return [
+            'with timestamp' => [
+                'fileInfo' => ['x-bz-info-src_last_modified_millis' => 1462212185001],
+                'expectedTimestamp' => '@' . 1462212185,
+            ],
+
+            'missing timestamp' => [
+                'fileInfo' => ['Last-Modified' => 1462212185001],
+                'expectedTimestamp' => 'now',
+            ],
+        ];
     }
 }
