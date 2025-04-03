@@ -2,10 +2,9 @@
 namespace Imbo\Storage;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
-/**
- * @group integration
- */
+#[Group('integration')]
 #[CoversClass(B2::class)]
 class B2IntegrationTest extends StorageTests
 {
