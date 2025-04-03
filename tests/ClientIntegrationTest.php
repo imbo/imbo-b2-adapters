@@ -1,12 +1,13 @@
 <?php declare(strict_types=1);
 namespace Imbo\Storage;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @coversDefaultClass Imbo\Storage\Client
  * @group integration
  */
+#[CoversClass(Client::class)]
 class ClientIntegrationTest extends TestCase
 {
     private Client $client;
@@ -40,9 +41,6 @@ class ClientIntegrationTest extends TestCase
         $this->client->emptyBucket();
     }
 
-    /**
-     * @covers ::uploadFile
-     */
     public function testCanUploadFile(): void
     {
         $this->assertTrue(
@@ -50,10 +48,6 @@ class ClientIntegrationTest extends TestCase
         );
     }
 
-    /**
-     * @covers ::uploadFile
-     * @covers ::getFileInfo
-     */
     public function testCanGetFileInfo(): void
     {
         $this->assertTrue(

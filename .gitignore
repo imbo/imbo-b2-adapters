@@ -2,7 +2,7 @@ build
 vendor
 phpunit.xml
 .env
-.phpunit.cache
+.phpunit.result.cache
 .vscode
 test.php
 .php-cs-fixer.cache

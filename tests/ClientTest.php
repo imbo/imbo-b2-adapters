@@ -7,13 +7,12 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
 use Imbo\Storage\Client\Exception;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-/**
- * @coversDefaultClass Imbo\Storage\Client
- */
+#[CoversClass(Client::class)]
 class ClientTest extends TestCase
 {
     private string $keyId          = 'keyId';
@@ -25,8 +24,8 @@ class ClientTest extends TestCase
     private string $apiUrl         = 'apiUrl';
 
     /**
-     * @param array<int, ResponseInterface> $responses
-     * @param array<int, array{response: ResponseInterface, request: RequestInterface}> $history
+     * @param list<ResponseInterface> $responses
+     * @param list<array{response:ResponseInterface,request:RequestInterface}> $history
      * @return HttpClient
      */
     private function getMockClient(array $responses, array &$history = []): HttpClient
@@ -38,7 +37,7 @@ class ClientTest extends TestCase
     }
 
     /**
-     * @param array<int, array{response: ResponseInterface, request: RequestInterface}> $history
+     * @param list<array{response:ResponseInterface,request:RequestInterface}> $history
      * @return HttpClient
      */
     private function getMockedAuthClient(array &$history = []): HttpClient
@@ -53,15 +52,15 @@ class ClientTest extends TestCase
     {
         return new Response(200, [], (string) json_encode([
             'authorizationToken' => $this->authToken,
-            'downloadUrl'        => $this->downloadUrl,
-            'apiUrl'             => $this->apiUrl,
+            'apiInfo' => [
+                'storageApi' => [
+                    'downloadUrl' => $this->downloadUrl,
+                    'apiUrl'      => $this->apiUrl,
+                ],
+            ],
         ]));
     }
 
-    /**
-     * @covers ::__construct
-     * @covers ::responseAsJson
-     */
     public function testCanConstructClient(): void
     {
         $history = [];
@@ -80,9 +79,6 @@ class ClientTest extends TestCase
         $this->assertSame('GET', $request->getMethod());
     }
 
-    /**
-     * @covers ::__construct
-     */
     public function testClientConstructionCanFail(): void
     {
         $this->expectExceptionObject(new Exception('Unable to create HttpClient for the B2 API', 503));
@@ -95,9 +91,18 @@ class ClientTest extends TestCase
         );
     }
 
-    /**
-     * @covers ::uploadFile
-     */
+    public function testClientConstructionCanFailWhenApiIsNotAvailable(): void
+    {
+        $this->expectExceptionObject(new Exception('The B2 storage API is not enabled for the specified API key', 503));
+        new Client(
+            $this->keyId,
+            $this->applicationKey,
+            $this->bucketId,
+            $this->bucketName,
+            $this->getMockClient([new Response(200, [], '{}')]),
+        );
+    }
+
     public function testCanUploadFile(): void
     {
         $uploadUrl   = 'uploadUrl';
@@ -133,10 +138,13 @@ class ClientTest extends TestCase
             'Expected file to be uploaded',
         );
 
+        parse_str($history[0]['request']->getUri()->getQuery(), $query);
+
         $this->assertCount(5, $history, 'Expected five transactions');
+        $this->assertArrayHasKey('bucketId', $query, 'Expected bucketId in the query string');
         $this->assertSame(
-            ['bucketId' => $this->bucketId],
-            json_decode($history[0]['request']->getBody()->getContents(), true),
+            $this->bucketId,
+            $query['bucketId'],
         );
         $this->assertSame(
             $uploadToken,
@@ -176,9 +184,6 @@ class ClientTest extends TestCase
         );
     }
 
-    /**
-     * @covers ::uploadFile
-     */
     public function testThrowsExceptionWhenUploadingFileFails(): void
     {
         $history     = [];
@@ -208,9 +213,6 @@ class ClientTest extends TestCase
         ))->uploadFile('filename', 'data');
     }
 
-    /**
-     * @covers ::deleteFile
-     */
     public function testCanDeleteFile(): void
     {
         $history     = [];
@@ -227,12 +229,14 @@ class ClientTest extends TestCase
                             'fileId'   => 'id2',
                             'fileName' => 'some/name',
                         ],
+
+                        // This should normally not occur, but
+                        // adding it here to verify that the
+                        // code does not accidentally delete the
+                        // file
                         [
                             'fileId'   => 'id3',
-                            'fileName' => 'some/other/name', // This should normally not occur, but
-                            // adding it here to verify that the
-                            // code does not accidentally delete the
-                            // file
+                            'fileName' => 'some/other/name',
                         ],
                     ],
                     'nextFileName' => null,
@@ -257,14 +261,14 @@ class ClientTest extends TestCase
         );
 
         $this->assertCount(4, $history, 'Expected four transactions');
+        parse_str($history[1]['request']->getUri()->getQuery(), $query);
         $this->assertSame(
             [
                 'bucketId'      => $this->bucketId,
                 'startFileName' => 'some/name',
-                'startFileId'   => null,
             ],
-            json_decode($history[1]['request']->getBody()->getContents(), true),
-            'Unexpected request body',
+            $query,
+            'Unexpected query string',
         );
         $this->assertSame(
             [
@@ -284,9 +288,6 @@ class ClientTest extends TestCase
         );
     }
 
-    /**
-     * @covers ::deleteFile
-     */
     public function testDeleteFileThrowsExceptionWhenFileDoesNotExist(): void
     {
         $this->expectExceptionObject(new Exception('File does not exist', 404));
@@ -300,9 +301,6 @@ class ClientTest extends TestCase
         ))->deleteFile('filename');
     }
 
-    /**
-     * @covers ::deleteFile
-     */
     public function testDeleteFileThrowsExceptionWhenDeleteFails(): void
     {
         $httpClient = $this->getMockClient(
@@ -333,9 +331,6 @@ class ClientTest extends TestCase
         ))->deleteFile('some/name');
     }
 
-    /**
-     * @covers ::deleteFile
-     */
     public function testDeleteFileThrowsExceptionWhenUnableToListFileVersions(): void
     {
         $httpClient = $this->getMockClient(
@@ -356,9 +351,6 @@ class ClientTest extends TestCase
         ))->deleteFile('some/name');
     }
 
-    /**
-     * @covers ::emptyBucket
-     */
     public function testCanEmptyBucket(): void
     {
         $history    = [];
@@ -421,9 +413,10 @@ class ClientTest extends TestCase
             ['fileId' => 'id2', 'fileName' => 'name'],
             json_decode($history[2]['request']->getBody()->getContents(), true),
         );
+        parse_str($history[3]['request']->getUri()->getQuery(), $query);
         $this->assertSame(
             ['bucketId' => $this->bucketId, 'startFileName' => 'name2', 'startFileId' => 'id3'],
-            json_decode($history[3]['request']->getBody()->getContents(), true),
+            $query,
         );
         $this->assertSame(
             ['fileId' => 'id3', 'fileName' => 'name2'],
@@ -435,9 +428,6 @@ class ClientTest extends TestCase
         );
     }
 
-    /**
-     * @covers ::emptyBucket
-     */
     public function testEmptyBucketFailsWhenUnableToListFileVersions(): void
     {
         $this->expectExceptionObject(new Exception('Unable to list file versions', 503));
@@ -451,9 +441,6 @@ class ClientTest extends TestCase
         ))->emptyBucket();
     }
 
-    /**
-     * @covers ::emptyBucket
-     */
     public function testEmptyBucketFailsWhenUnableToDeleteFileVersions(): void
     {
         $httpClient = $this->getMockClient(
@@ -483,9 +470,6 @@ class ClientTest extends TestCase
         ))->emptyBucket();
     }
 
-    /**
-     * @covers ::getStatus
-     */
     public function testCanGetStatus(): void
     {
         $history = [];
@@ -501,19 +485,15 @@ class ClientTest extends TestCase
             'Expected success status',
         );
 
-        /** @var array{bucketId: string} */
-        $requestBody = json_decode($history[0]['request']->getBody()->getContents(), true);
-
+        parse_str($history[0]['request']->getUri()->getQuery(), $query);
+        $this->assertArrayHasKey('bucketId', $query, 'Expected bucketId in the query string');
         $this->assertSame(
             $this->bucketId,
-            $requestBody['bucketId'],
+            $query['bucketId'],
             'Incorrect bucket ID',
         );
     }
 
-    /**
-     * @covers ::getStatus
-     */
     public function testGetStatusReturnsFalseOnFailure(): void
     {
         $this->assertFalse(
@@ -529,10 +509,6 @@ class ClientTest extends TestCase
         );
     }
 
-    /**
-     * @covers ::fileExists
-     * @covers ::getFileUrl
-     */
     public function testCanCheckIfFileExists(): void
     {
         $history = [];
@@ -562,9 +538,6 @@ class ClientTest extends TestCase
         );
     }
 
-    /**
-     * @covers ::fileExists
-     */
     public function testCheckIfFileExistsReturnsFalseWhenFileDoesNotExist(): void
     {
         $this->assertFalse(
@@ -580,9 +553,6 @@ class ClientTest extends TestCase
         );
     }
 
-    /**
-     * @covers ::fileExists
-     */
     public function testCheckIfFileExistsThrowsExceptionOnFailure(): void
     {
         $this->expectExceptionObject(new Exception('Unable to check if file exists', 503));
@@ -596,10 +566,6 @@ class ClientTest extends TestCase
         ))->fileExists('some/file');
     }
 
-    /**
-     * @covers ::getFile
-     * @covers ::getFileUrl
-     */
     public function testCanGetFile(): void
     {
         $history = [];
@@ -624,9 +590,6 @@ class ClientTest extends TestCase
         );
     }
 
-    /**
-     * @covers ::getFile
-     */
     public function testGetFileThrowsExceptionIfFilesDoesNotExist(): void
     {
         $this->expectExceptionObject(new Exception('File does not exist', 404));
@@ -640,9 +603,6 @@ class ClientTest extends TestCase
         ))->getFile('some/file');
     }
 
-    /**
-     * @covers ::getFile
-     */
     public function testGetFileThrowsExceptionOnError(): void
     {
         $this->expectExceptionObject(new Exception('Unable to get file', 503));
@@ -656,9 +616,6 @@ class ClientTest extends TestCase
         ))->getFile('some/file');
     }
 
-    /**
-     * @covers ::getFileInfo
-     */
     public function testCanGetFileInfo(): void
     {
         $history = [];
@@ -695,9 +652,6 @@ class ClientTest extends TestCase
         );
     }
 
-    /**
-     * @covers ::getFileInfo
-     */
     public function testGetFileInfoThrowsExceptionWhenFileDoesNotExist(): void
     {
         $this->expectExceptionObject(new Exception('File does not exist', 404));
@@ -711,9 +665,6 @@ class ClientTest extends TestCase
         ))->getFileInfo('some/file');
     }
 
-    /**
-     * @covers ::getFileInfo
-     */
     public function testGetFileInfoThrowsExceptionOnError(): void
     {
         $this->expectExceptionObject(new Exception('Unable to get file info', 503));
@@ -727,9 +678,6 @@ class ClientTest extends TestCase
         ))->getFileInfo('some/file');
     }
 
-    /**
-     * @covers ::responseAsJson
-     */
     public function testClientFailsWhenApiReturnsIncorrectJson(): void
     {
         $this->expectExceptionObject(new Exception('B2 API returned invalid JSON: Syntax error', 503));

@@ -1,10 +1,12 @@
 <?php declare(strict_types=1);
 namespace Imbo\Storage;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+
 /**
- * @coversDefaultClass Imbo\Storage\B2
  * @group integration
  */
+#[CoversClass(B2::class)]
 class B2IntegrationTest extends StorageTests
 {
     protected int $allowedTimestampDelta = 10;
