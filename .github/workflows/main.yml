@@ -45,7 +45,8 @@ jobs:
       - test
     if: ${{ always() }}
     runs-on: ubuntu-latest
+    name: Branch protection
     steps:
       - if: ${{ needs.test.result != 'success' }}
         run: exit 1
-      - run: echo "All checks and builds passed."
+      - run: echo "All checks passed."
