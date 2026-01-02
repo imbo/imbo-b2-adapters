@@ -4,6 +4,7 @@ jobs:
   ci:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         php: ["8.3", "8.4", "8.5"]
     name: Run CI build
