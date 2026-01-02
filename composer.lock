@@ -1257,25 +1257,25 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/imbo/imbo-adapters-sdk.git",
-                "reference": "8244379155c20855f4e75f1b418b885c0a95dd5e"
+                "reference": "222d2b1f07b6560f69815de044e679cd527566f9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/imbo/imbo-adapters-sdk/zipball/8244379155c20855f4e75f1b418b885c0a95dd5e",
-                "reference": "8244379155c20855f4e75f1b418b885c0a95dd5e",
+                "url": "https://api.github.com/repos/imbo/imbo-adapters-sdk/zipball/222d2b1f07b6560f69815de044e679cd527566f9",
+                "reference": "222d2b1f07b6560f69815de044e679cd527566f9",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.3"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.70",
+                "friendsofphp/php-cs-fixer": "^3.92",
                 "imbo/imbo": "dev-main",
-                "imbo/imbo-coding-standard": "^2.0",
+                "imbo/imbo-coding-standard": "^2.1",
                 "phpstan/extension-installer": "^1.4",
                 "phpstan/phpstan": "^2.1",
                 "phpstan/phpstan-phpunit": "^2.0",
-                "phpunit/phpunit": "^12.0"
+                "phpunit/phpunit": "^12.5"
             },
             "default-branch": true,
             "type": "library",
@@ -1308,7 +1308,7 @@
                 "issues": "https://github.com/imbo/imbo-adapters-sdk/issues",
                 "source": "https://github.com/imbo/imbo-adapters-sdk/tree/main"
             },
-            "time": "2025-04-24T08:31:47+00:00"
+            "time": "2026-01-02T17:55:42+00:00"
         },
         {
             "name": "imbo/imbo-coding-standard",
