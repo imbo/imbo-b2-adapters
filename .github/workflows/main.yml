@@ -1,13 +1,25 @@
-name: CI
-on: push
+name: Run CI pipeline
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
 jobs:
-  ci:
+  test:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        php: ["8.3", "8.4", "8.5"]
-    name: Run CI build
+        php:
+          - "8.3"
+          - "8.4"
+          - "8.5"
+    name: Validate and test on PHP ${{ matrix.php }}
     steps:
       - uses: actions/checkout@v6
       - uses: shivammathur/setup-php@v2
@@ -24,7 +36,6 @@ jobs:
           key: ${{ runner.os }}-php-${{ matrix.php }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-php-${{ matrix.php }}-composer-
-
       - run: composer install
       - run: vendor/bin/phpunit
       - run: vendor/bin/phpstan analyse
