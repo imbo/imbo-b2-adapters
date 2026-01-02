@@ -20,19 +20,19 @@
   ],
   "require": {
     "php": ">=8.3",
-    "guzzlehttp/guzzle": "^7.3"
+    "guzzlehttp/guzzle": "^7.10"
   },
   "require-dev": {
-    "friendsofphp/php-cs-fixer": "^3.75",
+    "friendsofphp/php-cs-fixer": "^3.92.3",
     "imbo/imbo": "dev-main",
     "imbo/imbo-adapters-sdk": "dev-main",
-    "imbo/imbo-coding-standard": "^2.0",
-    "phpstan/extension-installer": "^1.4",
-    "phpstan/phpstan": "^2.1",
-    "phpstan/phpstan-deprecation-rules": "^2.0",
-    "phpstan/phpstan-phpunit": "^2.0",
-    "phpunit/phpunit": "^12.0",
-    "symfony/var-dumper": "^7.2"
+    "imbo/imbo-coding-standard": "^2.1.1",
+    "phpstan/extension-installer": "^1.4.3",
+    "phpstan/phpstan": "^2.1.33",
+    "phpstan/phpstan-deprecation-rules": "^2.0.3",
+    "phpstan/phpstan-phpunit": "^2.0.11",
+    "phpunit/phpunit": "^12.5.4",
+    "symfony/var-dumper": "^8.0.3"
   },
   "autoload": {
     "psr-4": {
@@ -48,7 +48,8 @@
     "test": "vendor/bin/phpunit",
     "test:coverage": "vendor/bin/phpunit --coverage-html build/coverage",
     "sa": "vendor/bin/phpstan analyse",
-    "cs": "vendor/bin/php-cs-fixer fix --dry-run --diff",
+    "cs": "vendor/bin/php-cs-fixer check --diff",
+    "cs:fix": "vendor/bin/php-cs-fixer fix --diff",
     "ci": [
       "@sa",
       "@test",
