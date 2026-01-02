@@ -24,7 +24,7 @@ class Client
      * @param HttpClient $authClient Pre-configured client instance used for generating the auth token
      * @param HttpClient $httpClient Pre-configured client instance used for API calls
      */
-    public function __construct(string $keyId, string $applicationKey, string $bucketId, string $bucketName, HttpClient $authClient = null, HttpClient $httpClient = null)
+    public function __construct(string $keyId, string $applicationKey, string $bucketId, string $bucketName, ?HttpClient $authClient = null, ?HttpClient $httpClient = null)
     {
         try {
             /** @var array{authorizationToken:string,apiInfo:array{storageApi?:array{apiUrl:string,downloadUrl:string}}} */

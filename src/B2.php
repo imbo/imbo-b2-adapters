@@ -24,7 +24,7 @@ class B2 implements StorageInterface
      * @param string $bucketName     Name of the bucket to store the files in
      * @param Client $client         A pre-configured client
      */
-    public function __construct(string $keyId, string $applicationKey, string $bucketId, string $bucketName, Client $client = null)
+    public function __construct(string $keyId, string $applicationKey, string $bucketId, string $bucketName, ?Client $client = null)
     {
         $this->keyId          = $keyId;
         $this->applicationKey = $applicationKey;
