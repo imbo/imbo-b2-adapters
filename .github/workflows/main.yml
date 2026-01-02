@@ -40,3 +40,12 @@ jobs:
       - run: vendor/bin/phpunit
       - run: vendor/bin/phpstan analyse
       - run: PHP_CS_FIXER_IGNORE_ENV=1 vendor/bin/php-cs-fixer check --diff
+  branch-protection:
+    needs:
+      - test
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - if: ${{ needs.test.result != 'success' }}
+        run: exit 1
+      - run: echo "All checks and builds passed."
