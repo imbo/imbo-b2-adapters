@@ -1,6 +1,6 @@
 # B2 storage adapter for Imbo
 
-[![CI](https://github.com/imbo/imbo-b2-adapters/workflows/CI/badge.svg)](https://github.com/imbo/imbo-b2-adapters/actions?query=workflow%3ACI)
+[![CI](https://github.com/imbo/imbo-b2-adapters/actions/workflows/main.yml/badge.svg)](https://github.com/imbo/imbo-b2-adapters/actions/workflows/main.yml)
 
 [B2](https://www.backblaze.com/) storage adapter for Imbo.
 
