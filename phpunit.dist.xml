@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/12.0/phpunit.xsd" executionOrder="depends,defects" beStrictAboutOutputDuringTests="true" requireCoverageMetadata="true" displayDetailsOnTestsThatTriggerDeprecations="true" displayDetailsOnPhpunitDeprecations="true">
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/12.5/phpunit.xsd"
+  executionOrder="depends,defects" beStrictAboutOutputDuringTests="true"
+  requireCoverageMetadata="true" displayDetailsOnAllIssues="true">
   <testsuites>
     <testsuite name="default">
       <directory suffix="Test.php">tests</directory>
@@ -7,10 +10,10 @@
   </testsuites>
   <php>
     <!-- Set values to enable optional integration tests -->
-    <env name="B2_KEY_ID" value=""/>
-    <env name="B2_APPLICATION_KEY" value=""/>
-    <env name="B2_BUCKET_ID" value=""/>
-    <env name="B2_BUCKET_NAME" value=""/>
+    <env name="B2_KEY_ID" value="" />
+    <env name="B2_APPLICATION_KEY" value="" />
+    <env name="B2_BUCKET_ID" value="" />
+    <env name="B2_BUCKET_NAME" value="" />
   </php>
   <groups>
     <exclude>

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "663873aec528ea9bcb3129af7f8671ed",
+    "content-hash": "180b7aff56de1b64755c60905a9f9ecb",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -1168,28 +1168,28 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/imbo/imbo.git",
-                "reference": "915628550306834493b3eeb953416bb21e2935aa"
+                "reference": "d88c3c0feec56c6e19512085b115c48f02f0a378"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/imbo/imbo/zipball/915628550306834493b3eeb953416bb21e2935aa",
-                "reference": "915628550306834493b3eeb953416bb21e2935aa",
+                "url": "https://api.github.com/repos/imbo/imbo/zipball/d88c3c0feec56c6e19512085b115c48f02f0a378",
+                "reference": "d88c3c0feec56c6e19512085b115c48f02f0a378",
                 "shasum": ""
             },
             "require": {
                 "ext-imagick": "^3.7",
-                "guzzlehttp/psr7": "^2.0",
+                "guzzlehttp/psr7": "^2.8",
                 "php": ">=8.3",
-                "ramsey/uuid": "^4.2",
-                "symfony/console": "^7.2",
-                "symfony/http-foundation": "^7.2"
+                "ramsey/uuid": "^4.9",
+                "symfony/console": "^7.4",
+                "symfony/http-foundation": "^7.4"
             },
             "require-dev": {
-                "christeredvartsen/testfs": "^0.5.0",
-                "friendsofphp/php-cs-fixer": "^3.75",
+                "christeredvartsen/testfs": "^0.6",
+                "friendsofphp/php-cs-fixer": "^3.92",
                 "imbo/behat-api-extension": "^6.0",
                 "imbo/imbo-adapters-sdk": "dev-main",
-                "imbo/imbo-coding-standard": "^2.0",
+                "imbo/imbo-coding-standard": "^2.1",
                 "imbo/imbo-filesystem-adapters": "dev-main",
                 "imbo/imbo-mongodb-adapters": "dev-main",
                 "imbo/imbo-mysql-adapters": "dev-main",
@@ -1199,8 +1199,8 @@
                 "phpstan/phpstan": "^2.1",
                 "phpstan/phpstan-deprecation-rules": "^2.0",
                 "phpstan/phpstan-phpunit": "^2.0",
-                "phpunit/phpunit": "^12.1",
-                "symfony/var-dumper": "^7.2"
+                "phpunit/phpunit": "^12.5",
+                "symfony/var-dumper": "^7.4"
             },
             "suggest": {
                 "imbo/imbo-b2-adapters": "Enables usage of Backblaze B2 for storing images",
@@ -1249,7 +1249,7 @@
                 "issues": "https://github.com/imbo/imbo/issues",
                 "source": "https://github.com/imbo/imbo"
             },
-            "time": "2025-04-24T09:18:39+00:00"
+            "time": "2026-01-03T13:57:52+00:00"
         },
         {
             "name": "imbo/imbo-adapters-sdk",
@@ -1257,12 +1257,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/imbo/imbo-adapters-sdk.git",
-                "reference": "222d2b1f07b6560f69815de044e679cd527566f9"
+                "reference": "b80f65d53a6e3115fa9e49ce9c67a779209b5c7c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/imbo/imbo-adapters-sdk/zipball/222d2b1f07b6560f69815de044e679cd527566f9",
-                "reference": "222d2b1f07b6560f69815de044e679cd527566f9",
+                "url": "https://api.github.com/repos/imbo/imbo-adapters-sdk/zipball/b80f65d53a6e3115fa9e49ce9c67a779209b5c7c",
+                "reference": "b80f65d53a6e3115fa9e49ce9c67a779209b5c7c",
                 "shasum": ""
             },
             "require": {
@@ -1308,7 +1308,7 @@
                 "issues": "https://github.com/imbo/imbo-adapters-sdk/issues",
                 "source": "https://github.com/imbo/imbo-adapters-sdk/tree/main"
             },
-            "time": "2026-01-02T17:55:42+00:00"
+            "time": "2026-01-03T14:39:01+00:00"
         },
         {
             "name": "imbo/imbo-coding-standard",
