@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "180b7aff56de1b64755c60905a9f9ecb",
+    "content-hash": "bcc78234ed3e54af165c9667e318b07d",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -1060,16 +1060,16 @@
         },
         {
             "name": "friendsofphp/php-cs-fixer",
-            "version": "v3.92.3",
+            "version": "v3.92.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer.git",
-                "reference": "2ba8f5a60f6f42fb65758cfb3768434fa2d1c7e8"
+                "reference": "9e7488b19403423e02e8403cc1eb596baf4673b0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/2ba8f5a60f6f42fb65758cfb3768434fa2d1c7e8",
-                "reference": "2ba8f5a60f6f42fb65758cfb3768434fa2d1c7e8",
+                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/9e7488b19403423e02e8403cc1eb596baf4673b0",
+                "reference": "9e7488b19403423e02e8403cc1eb596baf4673b0",
                 "shasum": ""
             },
             "require": {
@@ -1101,17 +1101,17 @@
             },
             "require-dev": {
                 "facile-it/paraunit": "^1.3.1 || ^2.7",
-                "infection/infection": "^0.31.0",
-                "justinrainbow/json-schema": "^6.5",
-                "keradus/cli-executor": "^2.2",
+                "infection/infection": "^0.31",
+                "justinrainbow/json-schema": "^6.6",
+                "keradus/cli-executor": "^2.3",
                 "mikey179/vfsstream": "^1.6.12",
                 "php-coveralls/php-coveralls": "^2.9",
                 "php-cs-fixer/phpunit-constraint-isidenticalstring": "^1.6",
                 "php-cs-fixer/phpunit-constraint-xmlmatchesxsd": "^1.6",
-                "phpunit/phpunit": "^9.6.25 || ^10.5.53 || ^11.5.34",
+                "phpunit/phpunit": "^9.6.31 || ^10.5.60 || ^11.5.46",
                 "symfony/polyfill-php85": "^1.33",
-                "symfony/var-dumper": "^5.4.48 || ^6.4.24 || ^7.3.2 || ^8.0",
-                "symfony/yaml": "^5.4.45 || ^6.4.24 || ^7.3.2 || ^8.0"
+                "symfony/var-dumper": "^5.4.48 || ^6.4.26 || ^7.4.0 || ^8.0",
+                "symfony/yaml": "^5.4.45 || ^6.4.30 || ^7.4.1 || ^8.0"
             },
             "suggest": {
                 "ext-dom": "For handling output formats in XML",
@@ -1152,7 +1152,7 @@
             ],
             "support": {
                 "issues": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/issues",
-                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.92.3"
+                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.92.4"
             },
             "funding": [
                 {
@@ -1160,7 +1160,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-12-18T10:45:02+00:00"
+            "time": "2026-01-04T00:38:52+00:00"
         },
         {
             "name": "imbo/imbo",
@@ -1168,12 +1168,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/imbo/imbo.git",
-                "reference": "d88c3c0feec56c6e19512085b115c48f02f0a378"
+                "reference": "522f88786a3e0eccc0c5b38575740cb051a93903"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/imbo/imbo/zipball/d88c3c0feec56c6e19512085b115c48f02f0a378",
-                "reference": "d88c3c0feec56c6e19512085b115c48f02f0a378",
+                "url": "https://api.github.com/repos/imbo/imbo/zipball/522f88786a3e0eccc0c5b38575740cb051a93903",
+                "reference": "522f88786a3e0eccc0c5b38575740cb051a93903",
                 "shasum": ""
             },
             "require": {
@@ -1186,15 +1186,11 @@
             },
             "require-dev": {
                 "christeredvartsen/testfs": "^0.6",
+                "ext-mongodb": "^2.0",
                 "friendsofphp/php-cs-fixer": "^3.92",
                 "imbo/behat-api-extension": "^6.0",
-                "imbo/imbo-adapters-sdk": "dev-main",
                 "imbo/imbo-coding-standard": "^2.1",
-                "imbo/imbo-filesystem-adapters": "dev-main",
-                "imbo/imbo-mongodb-adapters": "dev-main",
-                "imbo/imbo-mysql-adapters": "dev-main",
-                "imbo/imbo-postgresql-adapters": "dev-main",
-                "imbo/imbo-sqlite-adapters": "dev-main",
+                "mongodb/mongodb": "^2.1",
                 "phpstan/extension-installer": "^1.4",
                 "phpstan/phpstan": "^2.1",
                 "phpstan/phpstan-deprecation-rules": "^2.0",
@@ -1204,13 +1200,8 @@
             },
             "suggest": {
                 "imbo/imbo-b2-adapters": "Enables usage of Backblaze B2 for storing images",
-                "imbo/imbo-filesystem-adapters": "Enables usage of a (local) filesystem for storing images",
                 "imbo/imbo-metadata-cache": "Enables caching of metadata through an event listener",
-                "imbo/imbo-mongodb-adapters": "Enables usage of MongoDB for storing images",
-                "imbo/imbo-mysql-adapters": "Enables usage of MySQL as database",
-                "imbo/imbo-postgresql-adapters": "Enables usage of PostgreSQL as database",
-                "imbo/imbo-s3-adapters": "Enables usage of AWS S3 for storing images",
-                "imbo/imbo-sqlite-adapters": "Enables usage of SQLite as database"
+                "imbo/imbo-s3-adapters": "Enables usage of AWS S3 for storing images"
             },
             "default-branch": true,
             "bin": [
@@ -1219,7 +1210,8 @@
             "type": "project",
             "autoload": {
                 "psr-4": {
-                    "Imbo\\": "src/"
+                    "Imbo\\": "src/",
+                    "ImboSDK\\": "adapter-sdk/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -1249,66 +1241,7 @@
                 "issues": "https://github.com/imbo/imbo/issues",
                 "source": "https://github.com/imbo/imbo"
             },
-            "time": "2026-01-03T13:57:52+00:00"
-        },
-        {
-            "name": "imbo/imbo-adapters-sdk",
-            "version": "dev-main",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/imbo/imbo-adapters-sdk.git",
-                "reference": "b80f65d53a6e3115fa9e49ce9c67a779209b5c7c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/imbo/imbo-adapters-sdk/zipball/b80f65d53a6e3115fa9e49ce9c67a779209b5c7c",
-                "reference": "b80f65d53a6e3115fa9e49ce9c67a779209b5c7c",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=8.3"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.92",
-                "imbo/imbo": "dev-main",
-                "imbo/imbo-coding-standard": "^2.1",
-                "phpstan/extension-installer": "^1.4",
-                "phpstan/phpstan": "^2.1",
-                "phpstan/phpstan-phpunit": "^2.0",
-                "phpunit/phpunit": "^12.5"
-            },
-            "default-branch": true,
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Imbo\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Christer Edvartsen",
-                    "email": "cogo@starzinger.net",
-                    "homepage": "https://github.com/christeredvartsen"
-                },
-                {
-                    "name": "Contributors",
-                    "homepage": "https://github.com/imbo"
-                }
-            ],
-            "description": "SDK for Imbo adapters",
-            "homepage": "https://imbo.io/",
-            "keywords": [
-                "imbo"
-            ],
-            "support": {
-                "issues": "https://github.com/imbo/imbo-adapters-sdk/issues",
-                "source": "https://github.com/imbo/imbo-adapters-sdk/tree/main"
-            },
-            "time": "2026-01-03T14:39:01+00:00"
+            "time": "2026-01-07T11:50:23+00:00"
         },
         {
             "name": "imbo/imbo-coding-standard",
@@ -5599,8 +5532,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "imbo/imbo": 20,
-        "imbo/imbo-adapters-sdk": 20
+        "imbo/imbo": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

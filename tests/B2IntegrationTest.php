@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace Imbo\Storage;
 
+use ImboSDK\Storage\StorageTests;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -35,20 +36,14 @@ class B2IntegrationTest extends StorageTests
     {
         $this->checkEnv();
 
-        $client = new Client(
-            (string) getenv('B2_KEY_ID'),
-            (string) getenv('B2_APPLICATION_KEY'),
-            (string) getenv('B2_BUCKET_ID'),
-            (string) getenv('B2_BUCKET_NAME'),
-        );
+        $keyId = (string) getenv('B2_KEY_ID');
+        $applicationKey = (string) getenv('B2_APPLICATION_KEY');
+        $bucketId = (string) getenv('B2_BUCKET_ID');
+        $bucketName = (string) getenv('B2_BUCKET_NAME');
+
+        $client = new Client($keyId, $applicationKey, $bucketId, $bucketName);
         $client->emptyBucket();
 
-        return new B2(
-            (string) getenv('B2_KEY_ID'),
-            (string) getenv('B2_APPLICATION_KEY'),
-            (string) getenv('B2_BUCKET_ID'),
-            (string) getenv('B2_BUCKET_NAME'),
-            $client,
-        );
+        return new B2($keyId, $applicationKey, $bucketId, $bucketName, $client);
     }
 }
