@@ -104,13 +104,6 @@ class B2 implements StorageInterface
         }
     }
 
-    /**
-     * Get the path to an image
-     *
-     * @param string $user The user which the image belongs to
-     * @param string $imageIdentifier Image identifier
-     * @return string
-     */
     protected function getImagePath(string $user, string $imageIdentifier): string
     {
         return $user . '/' . $imageIdentifier;
