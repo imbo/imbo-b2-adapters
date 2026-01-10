@@ -1,9 +1,13 @@
 <?php declare(strict_types=1);
+
 namespace Imbo\Storage;
 
 use ImboSDK\Storage\StorageTests;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
+
+use function count;
+use function sprintf;
 
 #[Group('integration')]
 #[CoversClass(B2::class)]
@@ -28,7 +32,7 @@ class B2IntegrationTest extends StorageTests
         }
 
         if (count($missing)) {
-            $this->markTestSkipped(sprintf('Missing required environment variable(s) for the integration tests: %s', join(', ', $missing)));
+            $this->markTestSkipped(sprintf('Missing required environment variable(s) for the integration tests: %s', implode(', ', $missing)));
         }
     }
 

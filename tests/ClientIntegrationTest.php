@@ -1,9 +1,13 @@
 <?php declare(strict_types=1);
+
 namespace Imbo\Storage;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
+
+use function count;
+use function sprintf;
 
 #[Group('integration')]
 #[CoversClass(Client::class)]
@@ -11,7 +15,7 @@ class ClientIntegrationTest extends TestCase
 {
     private Client $client;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $required = [
             'B2_KEY_ID',
@@ -28,7 +32,7 @@ class ClientIntegrationTest extends TestCase
         }
 
         if (count($missing)) {
-            $this->markTestSkipped(sprintf('Missing required environment variable(s) for the integration tests: %s', join(', ', $missing)));
+            $this->markTestSkipped(sprintf('Missing required environment variable(s) for the integration tests: %s', implode(', ', $missing)));
         }
 
         $this->client = new Client(

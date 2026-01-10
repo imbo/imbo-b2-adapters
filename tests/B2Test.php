@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+
 namespace Imbo\Storage;
 
 use DateTime;
@@ -11,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(B2::class)]
 class B2Test extends TestCase
 {
-    private string $bucketId   = 'bucket-id';
+    private string $bucketId = 'bucket-id';
     private string $bucketName = 'bucket-name';
 
     private function getAdapter(Client $client): B2
@@ -200,8 +201,6 @@ class B2Test extends TestCase
         $this->getAdapter($client)->getLastModified('user', 'image-id');
     }
 
-
-
     public function testCanGetStatus(): void
     {
         $client = $this->createMock(Client::class);
@@ -272,7 +271,7 @@ class B2Test extends TestCase
         return [
             'with timestamp' => [
                 'fileInfo' => ['x-bz-info-src_last_modified_millis' => 1462212185001],
-                'expectedTimestamp' => '@' . 1462212185,
+                'expectedTimestamp' => '@'. 1462212185,
             ],
 
             'missing timestamp' => [
