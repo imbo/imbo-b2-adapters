@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+
 namespace Imbo\Storage;
 
 use GuzzleHttp\Client as HttpClient;
@@ -12,21 +13,22 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
+use function sprintf;
+
 #[CoversClass(Client::class)]
 class ClientTest extends TestCase
 {
-    private string $keyId          = 'keyId';
+    private string $keyId = 'keyId';
     private string $applicationKey = 'applicationKey';
-    private string $bucketId       = 'bucketId';
-    private string $bucketName     = 'bucketName';
-    private string $authToken      = 'token';
-    private string $downloadUrl    = 'downloadUrl';
-    private string $apiUrl         = 'apiUrl';
+    private string $bucketId = 'bucketId';
+    private string $bucketName = 'bucketName';
+    private string $authToken = 'token';
+    private string $downloadUrl = 'downloadUrl';
+    private string $apiUrl = 'apiUrl';
 
     /**
-     * @param list<ResponseInterface> $responses
+     * @param list<ResponseInterface>                                          $responses
      * @param list<array{response:ResponseInterface,request:RequestInterface}> $history
-     * @return HttpClient
      */
     private function getMockClient(array $responses, array &$history = []): HttpClient
     {
@@ -38,16 +40,12 @@ class ClientTest extends TestCase
 
     /**
      * @param list<array{response:ResponseInterface,request:RequestInterface}> $history
-     * @return HttpClient
      */
     private function getMockedAuthClient(array &$history = []): HttpClient
     {
         return $this->getMockClient([$this->getAuthResponse()], $history);
     }
 
-    /**
-     * @return Response
-     */
     private function getAuthResponse(): Response
     {
         return new Response(200, [], (string) json_encode([
@@ -55,7 +53,7 @@ class ClientTest extends TestCase
             'apiInfo' => [
                 'storageApi' => [
                     'downloadUrl' => $this->downloadUrl,
-                    'apiUrl'      => $this->apiUrl,
+                    'apiUrl' => $this->apiUrl,
                 ],
             ],
         ]));
@@ -105,20 +103,20 @@ class ClientTest extends TestCase
 
     public function testCanUploadFile(): void
     {
-        $uploadUrl   = 'uploadUrl';
+        $uploadUrl = 'uploadUrl';
         $uploadToken = 'uploadToken';
-        $history     = [];
-        $httpClient  = $this->getMockClient(
+        $history = [];
+        $httpClient = $this->getMockClient(
             [
                 new Response(400), // Trigger another attempt
                 new Response(200, [], (string) json_encode([
                     'authorizationToken' => $uploadToken,
                 ])), // Trigger another attempt
                 new Response(200, [], (string) json_encode([
-                    'uploadUrl'          => $uploadUrl,
+                    'uploadUrl' => $uploadUrl,
                 ])), // Trigger another attempt
                 new Response(200, [], (string) json_encode([
-                    'uploadUrl'          => $uploadUrl,
+                    'uploadUrl' => $uploadUrl,
                     'authorizationToken' => $uploadToken,
                 ])),
                 new Response(200),
@@ -186,15 +184,15 @@ class ClientTest extends TestCase
 
     public function testThrowsExceptionWhenUploadingFileFails(): void
     {
-        $history     = [];
-        $httpClient  = $this->getMockClient(
+        $history = [];
+        $httpClient = $this->getMockClient(
             [
                 new Response(400), // Trigger another attempt
                 new Response(400), // Trigger another attempt
                 new Response(400), // Trigger another attempt
                 new Response(400), // Trigger last attempt
                 new Response(200, [], (string) json_encode([
-                    'uploadUrl'          => 'uploadUrl',
+                    'uploadUrl' => 'uploadUrl',
                     'authorizationToken' => 'uploadToken',
                 ])),
                 new Response(400), // Fail on the last attempt
@@ -215,18 +213,18 @@ class ClientTest extends TestCase
 
     public function testCanDeleteFile(): void
     {
-        $history     = [];
-        $httpClient  = $this->getMockClient(
+        $history = [];
+        $httpClient = $this->getMockClient(
             [
                 new Response(200), // Response for fileExists
                 new Response(200, [], (string) json_encode([
                     'files' => [
                         [
-                            'fileId'   => 'id1',
+                            'fileId' => 'id1',
                             'fileName' => 'some/name',
                         ],
                         [
-                            'fileId'   => 'id2',
+                            'fileId' => 'id2',
                             'fileName' => 'some/name',
                         ],
 
@@ -235,12 +233,12 @@ class ClientTest extends TestCase
                         // code does not accidentally delete the
                         // file
                         [
-                            'fileId'   => 'id3',
+                            'fileId' => 'id3',
                             'fileName' => 'some/other/name',
                         ],
                     ],
                     'nextFileName' => null,
-                    'nextFileId'   => null,
+                    'nextFileId' => null,
                 ])),
                 new Response(200),
                 new Response(200),
@@ -264,7 +262,7 @@ class ClientTest extends TestCase
         parse_str($history[1]['request']->getUri()->getQuery(), $query);
         $this->assertSame(
             [
-                'bucketId'      => $this->bucketId,
+                'bucketId' => $this->bucketId,
                 'startFileName' => 'some/name',
             ],
             $query,
@@ -309,12 +307,12 @@ class ClientTest extends TestCase
                 new Response(200, [], (string) json_encode([
                     'files' => [
                         [
-                            'fileId'   => 'id1',
+                            'fileId' => 'id1',
                             'fileName' => 'some/name',
                         ],
                     ],
                     'nextFileName' => null,
-                    'nextFileId'   => null,
+                    'nextFileId' => null,
                 ])),
                 new Response(400),
             ],
@@ -353,19 +351,19 @@ class ClientTest extends TestCase
 
     public function testCanEmptyBucket(): void
     {
-        $history    = [];
+        $history = [];
         $httpClient = $this->getMockClient(
             [
                 new Response(200, [], (string) json_encode([
                     'nextFileName' => 'name2',
-                    'nextFileId'   => 'id3',
-                    'files'        => [
+                    'nextFileId' => 'id3',
+                    'files' => [
                         [
-                            'fileId'   => 'id1',
+                            'fileId' => 'id1',
                             'fileName' => 'name',
                         ],
                         [
-                            'fileId'   => 'id2',
+                            'fileId' => 'id2',
                             'fileName' => 'name',
                         ],
                     ],
@@ -374,14 +372,14 @@ class ClientTest extends TestCase
                 new Response(200), // delete id2
                 new Response(200, [], (string) json_encode([
                     'nextFileName' => null,
-                    'nextFileId'   => null,
-                    'files'        => [
+                    'nextFileId' => null,
+                    'files' => [
                         [
-                            'fileId'   => 'id3',
+                            'fileId' => 'id3',
                             'fileName' => 'name2',
                         ],
                         [
-                            'fileId'   => 'id4',
+                            'fileId' => 'id4',
                             'fileName' => 'name3',
                         ],
                     ],
@@ -447,10 +445,10 @@ class ClientTest extends TestCase
             [
                 new Response(200, [], (string) json_encode([
                     'nextFileName' => null,
-                    'nextFileId'   => null,
-                    'files'        => [
+                    'nextFileId' => null,
+                    'files' => [
                         [
-                            'fileId'   => 'id',
+                            'fileId' => 'id',
                             'fileName' => 'name',
                         ],
                     ],
@@ -512,7 +510,7 @@ class ClientTest extends TestCase
     public function testCanCheckIfFileExists(): void
     {
         $history = [];
-        $file    = 'some/file';
+        $file = 'some/file';
         $this->assertTrue(
             (new Client(
                 $this->keyId,
@@ -619,11 +617,11 @@ class ClientTest extends TestCase
     public function testCanGetFileInfo(): void
     {
         $history = [];
-        $file    = 'some/file';
+        $file = 'some/file';
         $headers = [
-            'Cache-Control'  => 'max-age=0, no-cache, no-store',
+            'Cache-Control' => 'max-age=0, no-cache, no-store',
             'x-bz-file-name' => 'some/name',
-            'Date'           => 'Sat, 29 Aug 2020 08:09:07 GMT',
+            'Date' => 'Sat, 29 Aug 2020 08:09:07 GMT',
         ];
 
         $this->assertSame(

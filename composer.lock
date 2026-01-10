@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bcc78234ed3e54af165c9667e318b07d",
+    "content-hash": "bc583a9db87c29ffd639c749453fe601",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -1060,16 +1060,16 @@
         },
         {
             "name": "friendsofphp/php-cs-fixer",
-            "version": "v3.92.4",
+            "version": "v3.92.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer.git",
-                "reference": "9e7488b19403423e02e8403cc1eb596baf4673b0"
+                "reference": "260cc8c4a1d2f6d2f22cd4f9c70aa72e55ebac58"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/9e7488b19403423e02e8403cc1eb596baf4673b0",
-                "reference": "9e7488b19403423e02e8403cc1eb596baf4673b0",
+                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/260cc8c4a1d2f6d2f22cd4f9c70aa72e55ebac58",
+                "reference": "260cc8c4a1d2f6d2f22cd4f9c70aa72e55ebac58",
                 "shasum": ""
             },
             "require": {
@@ -1152,7 +1152,7 @@
             ],
             "support": {
                 "issues": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/issues",
-                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.92.4"
+                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.92.5"
             },
             "funding": [
                 {
@@ -1160,7 +1160,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-01-04T00:38:52+00:00"
+            "time": "2026-01-08T21:57:37+00:00"
         },
         {
             "name": "imbo/imbo",
@@ -1168,12 +1168,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/imbo/imbo.git",
-                "reference": "522f88786a3e0eccc0c5b38575740cb051a93903"
+                "reference": "fd636e405a216096a2c37372e23160708493482c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/imbo/imbo/zipball/522f88786a3e0eccc0c5b38575740cb051a93903",
-                "reference": "522f88786a3e0eccc0c5b38575740cb051a93903",
+                "url": "https://api.github.com/repos/imbo/imbo/zipball/fd636e405a216096a2c37372e23160708493482c",
+                "reference": "fd636e405a216096a2c37372e23160708493482c",
                 "shasum": ""
             },
             "require": {
@@ -1185,11 +1185,11 @@
                 "symfony/http-foundation": "^7.4"
             },
             "require-dev": {
-                "christeredvartsen/testfs": "^0.6",
+                "christeredvartsen/testfs": "^0.8.0",
                 "ext-mongodb": "^2.0",
                 "friendsofphp/php-cs-fixer": "^3.92",
                 "imbo/behat-api-extension": "^6.0",
-                "imbo/imbo-coding-standard": "^2.1",
+                "imbo/imbo-coding-standard": "^3.0",
                 "mongodb/mongodb": "^2.1",
                 "phpstan/extension-installer": "^1.4",
                 "phpstan/phpstan": "^2.1",
@@ -1241,27 +1241,28 @@
                 "issues": "https://github.com/imbo/imbo/issues",
                 "source": "https://github.com/imbo/imbo"
             },
-            "time": "2026-01-07T11:50:23+00:00"
+            "time": "2026-01-10T20:51:59+00:00"
         },
         {
             "name": "imbo/imbo-coding-standard",
-            "version": "v2.1.1",
+            "version": "v3.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/imbo/imbo-coding-standard.git",
-                "reference": "bd277b3c7cfbd3295d98a9849616ebd8d796d7ad"
+                "reference": "c692bf7c76dd4ce35a78fd1a91f7be16b238e86c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/imbo/imbo-coding-standard/zipball/bd277b3c7cfbd3295d98a9849616ebd8d796d7ad",
-                "reference": "bd277b3c7cfbd3295d98a9849616ebd8d796d7ad",
+                "url": "https://api.github.com/repos/imbo/imbo-coding-standard/zipball/c692bf7c76dd4ce35a78fd1a91f7be16b238e86c",
+                "reference": "c692bf7c76dd4ce35a78fd1a91f7be16b238e86c",
                 "shasum": ""
             },
             "require": {
-                "php": ">=8.1"
+                "kubawerlos/php-cs-fixer-custom-fixers": "^3.35",
+                "php": ">=8.3"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.0"
+                "friendsofphp/php-cs-fixer": "^3.92"
             },
             "type": "library",
             "autoload": {
@@ -1276,12 +1277,11 @@
             "authors": [
                 {
                     "name": "Christer Edvartsen",
-                    "email": "cogo@starzinger.net",
                     "homepage": "https://github.com/christeredvartsen"
                 },
                 {
                     "name": "Contributors",
-                    "homepage": "https://github.com/imbo"
+                    "homepage": "https://github.com/imbo/imbo-coding-standard/graphs/contributors"
                 }
             ],
             "description": "Imbo coding standard for PHP-CS-Fixer",
@@ -1291,9 +1291,61 @@
             ],
             "support": {
                 "issues": "https://github.com/imbo/imbo-coding-standard/issues",
-                "source": "https://github.com/imbo/imbo-coding-standard/tree/v2.1.1"
+                "source": "https://github.com/imbo/imbo-coding-standard/tree/v3.0.1"
             },
-            "time": "2023-07-03T18:44:31+00:00"
+            "time": "2026-01-10T20:35:48+00:00"
+        },
+        {
+            "name": "kubawerlos/php-cs-fixer-custom-fixers",
+            "version": "v3.35.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kubawerlos/php-cs-fixer-custom-fixers.git",
+                "reference": "2a35f80ae24ca77443a7af1599c3a3db1b6bd395"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kubawerlos/php-cs-fixer-custom-fixers/zipball/2a35f80ae24ca77443a7af1599c3a3db1b6bd395",
+                "reference": "2a35f80ae24ca77443a7af1599c3a3db1b6bd395",
+                "shasum": ""
+            },
+            "require": {
+                "ext-filter": "*",
+                "ext-tokenizer": "*",
+                "friendsofphp/php-cs-fixer": "^3.87",
+                "php": "^7.4 || ^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.6.24 || ^10.5.51 || ^11.5.32"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PhpCsFixerCustomFixers\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kuba Werłos",
+                    "email": "werlos@gmail.com"
+                }
+            ],
+            "description": "A set of custom fixers for PHP CS Fixer",
+            "support": {
+                "issues": "https://github.com/kubawerlos/php-cs-fixer-custom-fixers/issues",
+                "source": "https://github.com/kubawerlos/php-cs-fixer-custom-fixers/tree/v3.35.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/kubawerlos",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-09-28T18:43:35+00:00"
         },
         {
             "name": "myclabs/deep-copy",

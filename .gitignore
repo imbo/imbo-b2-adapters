@@ -6,3 +6,5 @@ phpunit.xml
 .vscode
 test.php
 .php-cs-fixer.cache
+.php-cs-fixer.php
+phpstan.neon

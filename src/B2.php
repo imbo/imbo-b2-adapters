@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+
 namespace Imbo\Storage;
 
 use DateTime;
@@ -13,7 +14,7 @@ class B2 implements StorageInterface
     private string $bucketId;
 
     /**
-     * Class constructor
+     * Class constructor.
      *
      * If a pre-configured client is not provided the constructor will create the client, resulting
      * in an account authorization, which can end up throwing an exception.
@@ -26,11 +27,11 @@ class B2 implements StorageInterface
      */
     public function __construct(string $keyId, string $applicationKey, string $bucketId, string $bucketName, ?Client $client = null)
     {
-        $this->keyId          = $keyId;
+        $this->keyId = $keyId;
         $this->applicationKey = $applicationKey;
-        $this->bucketId       = $bucketId;
-        $this->bucketName     = $bucketName;
-        $this->client         = $client ?: new Client($this->keyId, $this->applicationKey, $this->bucketId, $this->bucketName);
+        $this->bucketId = $bucketId;
+        $this->bucketName = $bucketName;
+        $this->client = $client ?: new Client($this->keyId, $this->applicationKey, $this->bucketId, $this->bucketName);
     }
 
     public function store(string $user, string $imageIdentifier, string $imageData): bool
@@ -87,7 +88,7 @@ class B2 implements StorageInterface
             ? (int) $info['x-bz-info-src_last_modified_millis']
             : (time() * 1000);
 
-        return new DateTime('@' . (int) ($timestamp / 1000));
+        return new DateTime('@'.(int) ($timestamp / 1000));
     }
 
     public function getStatus(): bool
@@ -106,6 +107,6 @@ class B2 implements StorageInterface
 
     protected function getImagePath(string $user, string $imageIdentifier): string
     {
-        return $user . '/' . $imageIdentifier;
+        return $user.'/'.$imageIdentifier;
     }
 }

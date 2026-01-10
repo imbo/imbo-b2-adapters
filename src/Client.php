@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+
 namespace Imbo\Storage;
 
 use GuzzleHttp\Client as HttpClient;
@@ -8,6 +9,10 @@ use Imbo\Storage\Client\Exception;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
+use function strlen;
+
+use const JSON_ERROR_NONE;
+
 class Client
 {
     private HttpClient $client;
@@ -16,11 +21,12 @@ class Client
     private string $downloadUrl;
 
     /**
-     * Class constructor
+     * Class constructor.
      *
      * The constructor creates an authorization token, and creates an underlying HTTP client
      *
      * @see https://www.backblaze.com/apidocs/b2-authorize-account
+     *
      * @param HttpClient $authClient Pre-configured client instance used for generating the auth token
      * @param HttpClient $httpClient Pre-configured client instance used for API calls
      */
@@ -41,22 +47,23 @@ class Client
 
         $api = $response['apiInfo']['storageApi'];
 
-        $this->bucketId    = $bucketId;
-        $this->bucketName  = $bucketName;
+        $this->bucketId = $bucketId;
+        $this->bucketName = $bucketName;
         $this->downloadUrl = rtrim($api['downloadUrl'], '/');
-        $this->client      = $httpClient ?: new HttpClient([
-            'base_uri' => rtrim($api['apiUrl'], '/') . '/b2api/v3/',
-            'headers'  => [
+        $this->client = $httpClient ?: new HttpClient([
+            'base_uri' => rtrim($api['apiUrl'], '/').'/b2api/v3/',
+            'headers' => [
                 'Authorization' => $response['authorizationToken'],
             ],
         ]);
     }
 
     /**
-     * Upload a file to B2
+     * Upload a file to B2.
      *
      * @see https://www.backblaze.com/apidocs/b2-get-upload-url
      * @see https://www.backblaze.com/apidocs/b2-upload-file
+     *
      * @throws Exception
      */
     public function uploadFile(string $fileName, string $data): bool
@@ -64,7 +71,7 @@ class Client
         /** @var ?Throwable */
         $e = null;
 
-        for ($attempt = 0; $attempt < 5; $attempt++) {
+        for ($attempt = 0; $attempt < 5; ++$attempt) {
             try {
                 /** @var array{uploadUrl?:string,authorizationToken?:string} */
                 $response = $this->responseAsJson($this->client->get('b2_get_upload_url', [
@@ -83,11 +90,11 @@ class Client
             try {
                 $this->client->post($response['uploadUrl'], [
                     RequestOptions::HEADERS => [
-                        'Authorization'                      => $response['authorizationToken'],
-                        'Content-Type'                       => 'b2/x-auto',
-                        'Content-Length'                     => strlen($data),
-                        'X-Bz-Content-Sha1'                  => sha1($data),
-                        'X-Bz-File-Name'                     => $fileName,
+                        'Authorization' => $response['authorizationToken'],
+                        'Content-Type' => 'b2/x-auto',
+                        'Content-Length' => strlen($data),
+                        'X-Bz-Content-Sha1' => sha1($data),
+                        'X-Bz-File-Name' => $fileName,
                         'X-Bz-Info-src_last_modified_millis' => time() * 1000,
                     ],
                     RequestOptions::BODY => $data,
@@ -103,10 +110,11 @@ class Client
     }
 
     /**
-     * Delete all versions of a file
+     * Delete all versions of a file.
      *
      * @see https://www.backblaze.com/apidocs/b2-list-file-versions
      * @see https://www.backblaze.com/apidocs/b2-delete-file-version
+     *
      * @throws Exception
      */
     public function deleteFile(string $fileName): bool
@@ -115,8 +123,8 @@ class Client
             throw new Exception('File does not exist', 404);
         }
 
-        $startFileName   = $fileName;
-        $startFileId     = null;
+        $startFileName = $fileName;
+        $startFileId = null;
         $fileIdsToDelete = [];
 
         while ($startFileName === $fileName) {
@@ -124,9 +132,9 @@ class Client
                 /** @var array{files:list<array{fileId:string,fileName:string}>,nextFileName:?string,nextFileId:?string} */
                 $response = $this->responseAsJson($this->client->get('b2_list_file_versions', [
                     RequestOptions::QUERY => [
-                        'bucketId'      => $this->bucketId,
+                        'bucketId' => $this->bucketId,
                         'startFileName' => $startFileName,
-                        'startFileId'   => $startFileId,
+                        'startFileId' => $startFileId,
                     ],
                 ]));
             } catch (HttpClientException $e) {
@@ -142,14 +150,14 @@ class Client
             }
 
             $startFileName = $response['nextFileName'];
-            $startFileId   = $response['nextFileId'];
+            $startFileId = $response['nextFileId'];
         }
 
         foreach ($fileIdsToDelete as $fileId) {
             try {
                 $this->client->post('b2_delete_file_version', [
                     RequestOptions::JSON => [
-                        'fileId'   => $fileId,
+                        'fileId' => $fileId,
                         'fileName' => $fileName,
                     ],
                 ]);
@@ -162,25 +170,26 @@ class Client
     }
 
     /**
-     * Remove all file versions from the bucket
+     * Remove all file versions from the bucket.
      *
      * @see https://www.backblaze.com/apidocs/b2-list-file-versions
      * @see https://www.backblaze.com/apidocs/b2-delete-file-version
+     *
      * @throws Exception
      */
     public function emptyBucket(): bool
     {
         $startFileName = null;
-        $startFileId   = null;
+        $startFileId = null;
 
         do {
             try {
                 /** @var array{files:list<array{fileId:string,fileName:string}>,nextFileName:?string,nextFileId:?string} */
                 $response = $this->responseAsJson($this->client->get('b2_list_file_versions', [
                     RequestOptions::QUERY => [
-                        'bucketId'      => $this->bucketId,
+                        'bucketId' => $this->bucketId,
                         'startFileName' => $startFileName,
-                        'startFileId'   => $startFileId,
+                        'startFileId' => $startFileId,
                     ],
                 ]));
             } catch (HttpClientException $e) {
@@ -188,13 +197,13 @@ class Client
             }
 
             $startFileName = $response['nextFileName'];
-            $startFileId   = $response['nextFileId'];
+            $startFileId = $response['nextFileId'];
 
             foreach ($response['files'] as $file) {
                 try {
                     $this->client->post('b2_delete_file_version', [
                         RequestOptions::JSON => [
-                            'fileId'   => $file['fileId'],
+                            'fileId' => $file['fileId'],
                             'fileName' => $file['fileName'],
                         ],
                     ]);
@@ -208,7 +217,7 @@ class Client
     }
 
     /**
-     * Check status
+     * Check status.
      *
      * @see https://www.backblaze.com/apidocs/b2-list-file-names
      */
@@ -217,7 +226,7 @@ class Client
         try {
             $this->client->get('b2_list_file_names', [
                 RequestOptions::QUERY => [
-                    'bucketId'     => $this->bucketId,
+                    'bucketId' => $this->bucketId,
                     'maxFileCount' => 1,
                 ],
             ]);
@@ -229,7 +238,7 @@ class Client
     }
 
     /**
-     * Check if a file exists
+     * Check if a file exists.
      *
      * @throws Exception
      */
@@ -249,7 +258,7 @@ class Client
     }
 
     /**
-     * Get a file
+     * Get a file.
      *
      * @throws Exception
      */
@@ -267,7 +276,7 @@ class Client
     }
 
     /**
-     * Get information regarding a single file
+     * Get information regarding a single file.
      *
      * @return array<string,string>
      */
@@ -284,11 +293,11 @@ class Client
         }
 
         /** @var array<string,string> */
-        return array_map(fn (array $header): string => implode($header), $response->getHeaders());
+        return array_map(fn (array $header): string => implode('', $header), $response->getHeaders());
     }
 
     /**
-     * Convert the Guzzle response instance
+     * Convert the Guzzle response instance.
      *
      * @return array<mixed>
      */
@@ -298,17 +307,17 @@ class Client
         $json = json_decode($response->getBody()->getContents(), true);
 
         if (JSON_ERROR_NONE !== json_last_error()) {
-            throw new Exception('B2 API returned invalid JSON: ' . json_last_error_msg(), 503);
+            throw new Exception('B2 API returned invalid JSON: '.json_last_error_msg(), 503);
         }
 
         return $json;
     }
 
     /**
-     * Get the URL for a file
+     * Get the URL for a file.
      */
     private function getFileUrl(string $fileName): string
     {
-        return $this->downloadUrl . '/file/' . $this->bucketName . '/' . $fileName;
+        return $this->downloadUrl.'/file/'.$this->bucketName.'/'.$fileName;
     }
 }
