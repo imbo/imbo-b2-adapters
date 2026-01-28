@@ -5,41 +5,20 @@ namespace Imbo\Storage;
 use ImboSDK\Storage\StorageTests;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
-
-use function count;
-use function sprintf;
+use PHPUnit\Framework\Attributes\RequiresEnvironmentVariable;
 
 #[Group('integration')]
 #[CoversClass(B2::class)]
+#[RequiresEnvironmentVariable('B2_KEY_ID')]
+#[RequiresEnvironmentVariable('B2_APPLICATION_KEY')]
+#[RequiresEnvironmentVariable('B2_BUCKET_ID')]
+#[RequiresEnvironmentVariable('B2_BUCKET_NAME')]
 class B2IntegrationTest extends StorageTests
 {
     protected int $allowedTimestampDelta = 10;
 
-    private function checkEnv(): void
-    {
-        $required = [
-            'B2_KEY_ID',
-            'B2_APPLICATION_KEY',
-            'B2_BUCKET_ID',
-            'B2_BUCKET_NAME',
-        ];
-        $missing = [];
-
-        foreach ($required as $var) {
-            if (empty(getenv($var))) {
-                $missing[] = $var;
-            }
-        }
-
-        if (count($missing)) {
-            $this->markTestSkipped(sprintf('Missing required environment variable(s) for the integration tests: %s', implode(', ', $missing)));
-        }
-    }
-
     protected function getAdapter(): B2
     {
-        $this->checkEnv();
-
         $keyId = (string) getenv('B2_KEY_ID');
         $applicationKey = (string) getenv('B2_APPLICATION_KEY');
         $bucketId = (string) getenv('B2_BUCKET_ID');

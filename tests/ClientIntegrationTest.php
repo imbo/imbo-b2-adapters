@@ -4,37 +4,21 @@ namespace Imbo\Storage;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RequiresEnvironmentVariable;
 use PHPUnit\Framework\TestCase;
-
-use function count;
-use function sprintf;
 
 #[Group('integration')]
 #[CoversClass(Client::class)]
+#[RequiresEnvironmentVariable('B2_KEY_ID')]
+#[RequiresEnvironmentVariable('B2_APPLICATION_KEY')]
+#[RequiresEnvironmentVariable('B2_BUCKET_ID')]
+#[RequiresEnvironmentVariable('B2_BUCKET_NAME')]
 class ClientIntegrationTest extends TestCase
 {
     private Client $client;
 
     protected function setUp(): void
     {
-        $required = [
-            'B2_KEY_ID',
-            'B2_APPLICATION_KEY',
-            'B2_BUCKET_ID',
-            'B2_BUCKET_NAME',
-        ];
-        $missing = [];
-
-        foreach ($required as $var) {
-            if (empty(getenv($var))) {
-                $missing[] = $var;
-            }
-        }
-
-        if (count($missing)) {
-            $this->markTestSkipped(sprintf('Missing required environment variable(s) for the integration tests: %s', implode(', ', $missing)));
-        }
-
         $this->client = new Client(
             (string) getenv('B2_KEY_ID'),
             (string) getenv('B2_APPLICATION_KEY'),

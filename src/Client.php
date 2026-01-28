@@ -293,7 +293,7 @@ class Client
         }
 
         /** @var array<string,string> */
-        return array_map(fn (array $header): string => implode('', $header), $response->getHeaders());
+        return array_map(static fn (array $header): string => implode('', $header), $response->getHeaders());
     }
 
     /**
