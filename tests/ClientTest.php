@@ -165,9 +165,9 @@ class ClientTest extends TestCase
             'Incorrect filename for the upload',
         );
         $this->assertEqualsWithDelta(
-            time() * 1000,
+            time() * 1_000,
             (int) $history[4]['request']->getHeaderLine('X-Bz-Info-src_last_modified_millis'),
-            1000,
+            1_000,
             'Incorrect last modification timestamp for the upload',
         );
         $this->assertSame(
