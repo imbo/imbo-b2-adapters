@@ -86,9 +86,9 @@ class B2 implements StorageInterface
 
         $timestamp = isset($info['x-bz-info-src_last_modified_millis'])
             ? (int) $info['x-bz-info-src_last_modified_millis']
-            : (time() * 1000);
+            : (time() * 1_000);
 
-        return new DateTime('@'.(int) ($timestamp / 1000));
+        return new DateTime('@'.(int) ($timestamp / 1_000));
     }
 
     public function getStatus(): bool

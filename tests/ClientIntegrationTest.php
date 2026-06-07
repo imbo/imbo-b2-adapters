@@ -50,9 +50,9 @@ class ClientIntegrationTest extends TestCase
         );
 
         $this->assertEqualsWithDelta(
-            time() * 1000,
+            time() * 1_000,
             (int) $info['x-bz-info-src_last_modified_millis'],
-            5000,
+            5_000,
             'Last modification timestamp is off',
         );
     }

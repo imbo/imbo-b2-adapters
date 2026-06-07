@@ -270,12 +270,12 @@ class B2Test extends TestCase
     {
         return [
             'with timestamp' => [
-                'fileInfo' => ['x-bz-info-src_last_modified_millis' => 1462212185001],
-                'expectedTimestamp' => '@'. 1462212185,
+                'fileInfo' => ['x-bz-info-src_last_modified_millis' => 1_462_212_185_001],
+                'expectedTimestamp' => '@'. 1_462_212_185,
             ],
 
             'missing timestamp' => [
-                'fileInfo' => ['Last-Modified' => 1462212185001],
+                'fileInfo' => ['Last-Modified' => 1_462_212_185_001],
                 'expectedTimestamp' => 'now',
             ],
         ];

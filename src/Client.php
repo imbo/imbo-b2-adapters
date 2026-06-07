@@ -95,7 +95,7 @@ class Client
                         'Content-Length' => strlen($data),
                         'X-Bz-Content-Sha1' => sha1($data),
                         'X-Bz-File-Name' => $fileName,
-                        'X-Bz-Info-src_last_modified_millis' => time() * 1000,
+                        'X-Bz-Info-src_last_modified_millis' => time() * 1_000,
                     ],
                     RequestOptions::BODY => $data,
                 ]);
