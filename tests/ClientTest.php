@@ -2,16 +2,20 @@
 
 namespace Imbo\Storage;
 
+use ArrayObject;
 use GuzzleHttp\Client as HttpClient;
+use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
+use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use Imbo\Storage\Client\Exception;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Throwable;
 
 use function sprintf;
 
@@ -27,23 +31,26 @@ class ClientTest extends TestCase
     private string $apiUrl = 'apiUrl';
 
     /**
-     * @param list<ResponseInterface>                                          $responses
-     * @param list<array{response:ResponseInterface,request:RequestInterface}> $history
+     * @param list<ResponseInterface|Throwable> $responses
+     *
+     * @return array{0:HttpClient,1:array<array{request:RequestInterface,response:ResponseInterface,error:mixed,options:array<mixed>}>}
      */
-    private function getMockClient(array $responses, array &$history = []): HttpClient
+    private function getMockClient(array $responses): array
     {
+        $history = new ArrayObject();
         $handler = HandlerStack::create(new MockHandler($responses));
         $handler->push(Middleware::history($history));
 
-        return new HttpClient(['handler' => $handler]);
+        /** @var array<array{request:RequestInterface,response:ResponseInterface,error:mixed,options:array<mixed>}> $history */
+        return [new HttpClient(['handler' => $handler]), $history];
     }
 
     /**
-     * @param list<array{response:ResponseInterface,request:RequestInterface}> $history
+     * @return array{0:HttpClient,1:array<array{request:RequestInterface,response:ResponseInterface,error:mixed,options:array<mixed>}>}
      */
-    private function getMockedAuthClient(array &$history = []): HttpClient
+    private function getMockedAuthClient(): array
     {
-        return $this->getMockClient([$this->getAuthResponse()], $history);
+        return $this->getMockClient([$this->getAuthResponse()]);
     }
 
     private function getAuthResponse(): Response
@@ -61,14 +68,14 @@ class ClientTest extends TestCase
 
     public function testCanConstructClient(): void
     {
-        $history = [];
+        [$authClient, $history] = $this->getMockedAuthClient();
 
         new Client(
             $this->keyId,
             $this->applicationKey,
             $this->bucketId,
             $this->bucketName,
-            $this->getMockedAuthClient($history),
+            $authClient,
         );
 
         $this->assertCount(1, $history, 'Expected one transaction');
@@ -80,24 +87,41 @@ class ClientTest extends TestCase
     public function testClientConstructionCanFail(): void
     {
         $this->expectExceptionObject(new Exception('Unable to create HttpClient for the B2 API', 503));
+        [$authClient] = $this->getMockClient([new Response(400)]);
         new Client(
             $this->keyId,
             $this->applicationKey,
             $this->bucketId,
             $this->bucketName,
-            $this->getMockClient([new Response(400)]),
+            $authClient,
+        );
+    }
+
+    public function testClientConstructionCanFailOnConnectionError(): void
+    {
+        $this->expectExceptionObject(new Exception('Unable to create HttpClient for the B2 API', 503));
+        [$authClient] = $this->getMockClient([
+            new ConnectException('Connection failed', new Request('GET', 'https://api.backblazeb2.com')),
+        ]);
+        new Client(
+            $this->keyId,
+            $this->applicationKey,
+            $this->bucketId,
+            $this->bucketName,
+            $authClient,
         );
     }
 
     public function testClientConstructionCanFailWhenApiIsNotAvailable(): void
     {
         $this->expectExceptionObject(new Exception('The B2 storage API is not enabled for the specified API key', 503));
+        [$authClient] = $this->getMockClient([new Response(200, [], '{}')]);
         new Client(
             $this->keyId,
             $this->applicationKey,
             $this->bucketId,
             $this->bucketName,
-            $this->getMockClient([new Response(200, [], '{}')]),
+            $authClient,
         );
     }
 
@@ -105,8 +129,7 @@ class ClientTest extends TestCase
     {
         $uploadUrl = 'uploadUrl';
         $uploadToken = 'uploadToken';
-        $history = [];
-        $httpClient = $this->getMockClient(
+        [$httpClient, $history] = $this->getMockClient(
             [
                 new Response(400), // Trigger another attempt
                 new Response(200, [], (string) json_encode([
@@ -121,16 +144,16 @@ class ClientTest extends TestCase
                 ])),
                 new Response(200),
             ],
-            $history,
         );
 
+        [$authClient] = $this->getMockedAuthClient();
         $this->assertTrue(
             (new Client(
                 $this->keyId,
                 $this->applicationKey,
                 $this->bucketId,
                 $this->bucketName,
-                $this->getMockedAuthClient(),
+                $authClient,
                 $httpClient,
             ))->uploadFile('filename', 'data'),
             'Expected file to be uploaded',
@@ -184,8 +207,7 @@ class ClientTest extends TestCase
 
     public function testThrowsExceptionWhenUploadingFileFails(): void
     {
-        $history = [];
-        $httpClient = $this->getMockClient(
+        [$httpClient] = $this->getMockClient(
             [
                 new Response(400), // Trigger another attempt
                 new Response(400), // Trigger another attempt
@@ -197,24 +219,23 @@ class ClientTest extends TestCase
                 ])),
                 new Response(400), // Fail on the last attempt
             ],
-            $history,
         );
 
+        [$authClient] = $this->getMockedAuthClient();
         $this->expectExceptionObject(new Exception('Unable to upload file to B2', 503));
         (new Client(
             $this->keyId,
             $this->applicationKey,
             $this->bucketId,
             $this->bucketName,
-            $this->getMockedAuthClient(),
+            $authClient,
             $httpClient,
         ))->uploadFile('filename', 'data');
     }
 
     public function testCanDeleteFile(): void
     {
-        $history = [];
-        $httpClient = $this->getMockClient(
+        [$httpClient, $history] = $this->getMockClient(
             [
                 new Response(200), // Response for fileExists
                 new Response(200, [], (string) json_encode([
@@ -243,16 +264,16 @@ class ClientTest extends TestCase
                 new Response(200),
                 new Response(200),
             ],
-            $history,
         );
 
+        [$authClient] = $this->getMockedAuthClient();
         $this->assertTrue(
             (new Client(
                 $this->keyId,
                 $this->applicationKey,
                 $this->bucketId,
                 $this->bucketName,
-                $this->getMockedAuthClient(),
+                $authClient,
                 $httpClient,
             ))->deleteFile('some/name'),
             'Expected to delete file',
@@ -288,20 +309,22 @@ class ClientTest extends TestCase
 
     public function testDeleteFileThrowsExceptionWhenFileDoesNotExist(): void
     {
+        [$authClient] = $this->getMockedAuthClient();
+        [$httpClient] = $this->getMockClient([new Response(404)]);
         $this->expectExceptionObject(new Exception('File does not exist', 404));
         (new Client(
             $this->keyId,
             $this->applicationKey,
             $this->bucketId,
             $this->bucketName,
-            $this->getMockedAuthClient(),
-            $this->getMockClient([new Response(404)]),
+            $authClient,
+            $httpClient,
         ))->deleteFile('filename');
     }
 
     public function testDeleteFileThrowsExceptionWhenDeleteFails(): void
     {
-        $httpClient = $this->getMockClient(
+        [$httpClient] = $this->getMockClient(
             [
                 new Response(200), // Response for fileExists
                 new Response(200, [], (string) json_encode([
@@ -318,41 +341,42 @@ class ClientTest extends TestCase
             ],
         );
 
+        [$authClient] = $this->getMockedAuthClient();
         $this->expectExceptionObject(new Exception('Unable to delete file version', 503));
         (new Client(
             $this->keyId,
             $this->applicationKey,
             $this->bucketId,
             $this->bucketName,
-            $this->getMockedAuthClient(),
+            $authClient,
             $httpClient,
         ))->deleteFile('some/name');
     }
 
     public function testDeleteFileThrowsExceptionWhenUnableToListFileVersions(): void
     {
-        $httpClient = $this->getMockClient(
+        [$httpClient] = $this->getMockClient(
             [
                 new Response(200), // Response for fileExists
                 new Response(500),
             ],
         );
 
+        [$authClient] = $this->getMockedAuthClient();
         $this->expectExceptionObject(new Exception('Unable to list file versions', 503));
         (new Client(
             $this->keyId,
             $this->applicationKey,
             $this->bucketId,
             $this->bucketName,
-            $this->getMockedAuthClient(),
+            $authClient,
             $httpClient,
         ))->deleteFile('some/name');
     }
 
     public function testCanEmptyBucket(): void
     {
-        $history = [];
-        $httpClient = $this->getMockClient(
+        [$httpClient, $history] = $this->getMockClient(
             [
                 new Response(200, [], (string) json_encode([
                     'nextFileName' => 'name2',
@@ -387,16 +411,16 @@ class ClientTest extends TestCase
                 new Response(200), // delete id3
                 new Response(200), // delete id4
             ],
-            $history,
         );
 
+        [$authClient] = $this->getMockedAuthClient();
         $this->assertTrue(
             (new Client(
                 $this->keyId,
                 $this->applicationKey,
                 $this->bucketId,
                 $this->bucketName,
-                $this->getMockedAuthClient(),
+                $authClient,
                 $httpClient,
             ))->emptyBucket(),
             'Expected to empty bucket',
@@ -428,20 +452,22 @@ class ClientTest extends TestCase
 
     public function testEmptyBucketFailsWhenUnableToListFileVersions(): void
     {
+        [$authClient] = $this->getMockedAuthClient();
+        [$httpClient] = $this->getMockClient([new Response(500)]);
         $this->expectExceptionObject(new Exception('Unable to list file versions', 503));
         (new Client(
             $this->keyId,
             $this->applicationKey,
             $this->bucketId,
             $this->bucketName,
-            $this->getMockedAuthClient(),
-            $this->getMockClient([new Response(500)]),
+            $authClient,
+            $httpClient,
         ))->emptyBucket();
     }
 
     public function testEmptyBucketFailsWhenUnableToDeleteFileVersions(): void
     {
-        $httpClient = $this->getMockClient(
+        [$httpClient] = $this->getMockClient(
             [
                 new Response(200, [], (string) json_encode([
                     'nextFileName' => null,
@@ -457,28 +483,30 @@ class ClientTest extends TestCase
             ],
         );
 
+        [$authClient] = $this->getMockedAuthClient();
         $this->expectExceptionObject(new Exception('Unable to delete file version', 503));
         (new Client(
             $this->keyId,
             $this->applicationKey,
             $this->bucketId,
             $this->bucketName,
-            $this->getMockedAuthClient(),
+            $authClient,
             $httpClient,
         ))->emptyBucket();
     }
 
     public function testCanGetStatus(): void
     {
-        $history = [];
+        [$authClient] = $this->getMockedAuthClient();
+        [$httpClient, $history] = $this->getMockClient([new Response(200)]);
         $this->assertTrue(
             (new Client(
                 $this->keyId,
                 $this->applicationKey,
                 $this->bucketId,
                 $this->bucketName,
-                $this->getMockedAuthClient(),
-                $this->getMockClient([new Response(200)], $history),
+                $authClient,
+                $httpClient,
             ))->getStatus(),
             'Expected success status',
         );
@@ -494,14 +522,16 @@ class ClientTest extends TestCase
 
     public function testGetStatusReturnsFalseOnFailure(): void
     {
+        [$authClient] = $this->getMockedAuthClient();
+        [$httpClient] = $this->getMockClient([new Response(400)]);
         $this->assertFalse(
             (new Client(
                 $this->keyId,
                 $this->applicationKey,
                 $this->bucketId,
                 $this->bucketName,
-                $this->getMockedAuthClient(),
-                $this->getMockClient([new Response(400)]),
+                $authClient,
+                $httpClient,
             ))->getStatus(),
             'Expected failure status',
         );
@@ -509,7 +539,8 @@ class ClientTest extends TestCase
 
     public function testCanCheckIfFileExists(): void
     {
-        $history = [];
+        [$authClient] = $this->getMockedAuthClient();
+        [$httpClient, $history] = $this->getMockClient([new Response(200)]);
         $file = 'some/file';
         $this->assertTrue(
             (new Client(
@@ -517,8 +548,8 @@ class ClientTest extends TestCase
                 $this->applicationKey,
                 $this->bucketId,
                 $this->bucketName,
-                $this->getMockedAuthClient(),
-                $this->getMockClient([new Response(200)], $history),
+                $authClient,
+                $httpClient,
             ))->fileExists($file),
             'Expected file to exist',
         );
@@ -538,14 +569,16 @@ class ClientTest extends TestCase
 
     public function testCheckIfFileExistsReturnsFalseWhenFileDoesNotExist(): void
     {
+        [$authClient] = $this->getMockedAuthClient();
+        [$httpClient] = $this->getMockClient([new Response(404)]);
         $this->assertFalse(
             (new Client(
                 $this->keyId,
                 $this->applicationKey,
                 $this->bucketId,
                 $this->bucketName,
-                $this->getMockedAuthClient(),
-                $this->getMockClient([new Response(404)]),
+                $authClient,
+                $httpClient,
             ))->fileExists('some/file'),
             'Did not expect file to exist',
         );
@@ -553,20 +586,23 @@ class ClientTest extends TestCase
 
     public function testCheckIfFileExistsThrowsExceptionOnFailure(): void
     {
+        [$authClient] = $this->getMockedAuthClient();
+        [$httpClient] = $this->getMockClient([new Response(400)]);
         $this->expectExceptionObject(new Exception('Unable to check if file exists', 503));
         (new Client(
             $this->keyId,
             $this->applicationKey,
             $this->bucketId,
             $this->bucketName,
-            $this->getMockedAuthClient(),
-            $this->getMockClient([new Response(400)]),
+            $authClient,
+            $httpClient,
         ))->fileExists('some/file');
     }
 
     public function testCanGetFile(): void
     {
-        $history = [];
+        [$authClient] = $this->getMockedAuthClient();
+        [$httpClient, $history] = $this->getMockClient([new Response(200, [], 'some file content')]);
         $file = 'some/file';
         $this->assertSame(
             'some file content',
@@ -575,8 +611,8 @@ class ClientTest extends TestCase
                 $this->applicationKey,
                 $this->bucketId,
                 $this->bucketName,
-                $this->getMockedAuthClient(),
-                $this->getMockClient([new Response(200, [], 'some file content')], $history),
+                $authClient,
+                $httpClient,
             ))->getFile($file),
             'Incorrect file content returned',
         );
@@ -590,33 +626,36 @@ class ClientTest extends TestCase
 
     public function testGetFileThrowsExceptionIfFilesDoesNotExist(): void
     {
+        [$authClient] = $this->getMockedAuthClient();
+        [$httpClient] = $this->getMockClient([new Response(404)]);
         $this->expectExceptionObject(new Exception('File does not exist', 404));
         (new Client(
             $this->keyId,
             $this->applicationKey,
             $this->bucketId,
             $this->bucketName,
-            $this->getMockedAuthClient(),
-            $this->getMockClient([new Response(404)]),
+            $authClient,
+            $httpClient,
         ))->getFile('some/file');
     }
 
     public function testGetFileThrowsExceptionOnError(): void
     {
+        [$authClient] = $this->getMockedAuthClient();
+        [$httpClient] = $this->getMockClient([new Response(500)]);
         $this->expectExceptionObject(new Exception('Unable to get file', 503));
         (new Client(
             $this->keyId,
             $this->applicationKey,
             $this->bucketId,
             $this->bucketName,
-            $this->getMockedAuthClient(),
-            $this->getMockClient([new Response(500)]),
+            $authClient,
+            $httpClient,
         ))->getFile('some/file');
     }
 
     public function testCanGetFileInfo(): void
     {
-        $history = [];
         $file = 'some/file';
         $headers = [
             'Cache-Control' => 'max-age=0, no-cache, no-store',
@@ -624,6 +663,8 @@ class ClientTest extends TestCase
             'Date' => 'Sat, 29 Aug 2020 08:09:07 GMT',
         ];
 
+        [$authClient] = $this->getMockedAuthClient();
+        [$httpClient, $history] = $this->getMockClient([new Response(200, $headers)]);
         $this->assertSame(
             $headers,
             (new Client(
@@ -631,8 +672,8 @@ class ClientTest extends TestCase
                 $this->applicationKey,
                 $this->bucketId,
                 $this->bucketName,
-                $this->getMockedAuthClient(),
-                $this->getMockClient([new Response(200, $headers)], $history),
+                $authClient,
+                $httpClient,
             ))->getFileInfo($file),
             'Incorrect file info returned',
         );
@@ -652,39 +693,44 @@ class ClientTest extends TestCase
 
     public function testGetFileInfoThrowsExceptionWhenFileDoesNotExist(): void
     {
+        [$authClient] = $this->getMockedAuthClient();
+        [$httpClient] = $this->getMockClient([new Response(404)]);
         $this->expectExceptionObject(new Exception('File does not exist', 404));
         (new Client(
             $this->keyId,
             $this->applicationKey,
             $this->bucketId,
             $this->bucketName,
-            $this->getMockedAuthClient(),
-            $this->getMockClient([new Response(404)]),
+            $authClient,
+            $httpClient,
         ))->getFileInfo('some/file');
     }
 
     public function testGetFileInfoThrowsExceptionOnError(): void
     {
+        [$authClient] = $this->getMockedAuthClient();
+        [$httpClient] = $this->getMockClient([new Response(403)]);
         $this->expectExceptionObject(new Exception('Unable to get file info', 503));
         (new Client(
             $this->keyId,
             $this->applicationKey,
             $this->bucketId,
             $this->bucketName,
-            $this->getMockedAuthClient(),
-            $this->getMockClient([new Response(403)]),
+            $authClient,
+            $httpClient,
         ))->getFileInfo('some/file');
     }
 
     public function testClientFailsWhenApiReturnsIncorrectJson(): void
     {
+        [$authClient] = $this->getMockClient([new Response(200, [], 'OK')]);
         $this->expectExceptionObject(new Exception('B2 API returned invalid JSON: Syntax error', 503));
         new Client(
             $this->keyId,
             $this->applicationKey,
             $this->bucketId,
             $this->bucketName,
-            $this->getMockClient([new Response(200, [], 'OK')]),
+            $authClient,
         );
     }
 }

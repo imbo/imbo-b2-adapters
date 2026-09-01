@@ -3,8 +3,3 @@ parameters:
 	paths:
 		- src
 		- tests
-	ignoreErrors:
-		-
-			message: '#Parameter \&\$history#'
-			identifier: parameterByRef.type
-			path: tests/ClientTest.php

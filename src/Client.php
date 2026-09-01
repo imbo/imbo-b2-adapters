@@ -3,7 +3,7 @@
 namespace Imbo\Storage;
 
 use GuzzleHttp\Client as HttpClient;
-use GuzzleHttp\Exception\BadResponseException as HttpClientException;
+use GuzzleHttp\Exception\GuzzleException as HttpClientException;
 use GuzzleHttp\RequestOptions;
 use Imbo\Storage\Client\Exception;
 use Psr\Http\Message\ResponseInterface;
@@ -92,10 +92,10 @@ class Client
                     RequestOptions::HEADERS => [
                         'Authorization' => $response['authorizationToken'],
                         'Content-Type' => 'b2/x-auto',
-                        'Content-Length' => strlen($data),
+                        'Content-Length' => (string) strlen($data),
                         'X-Bz-Content-Sha1' => sha1($data),
                         'X-Bz-File-Name' => $fileName,
-                        'X-Bz-Info-src_last_modified_millis' => time() * 1_000,
+                        'X-Bz-Info-src_last_modified_millis' => (string) (time() * 1_000),
                     ],
                     RequestOptions::BODY => $data,
                 ]);
